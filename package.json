@@ -1,0 +1,45 @@
+{
+  "name": "chainlink-node-rewards",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test --network hardhat",
+    "start": "npx hardhat node --network hardhat",
+    "compile": "npx hardhat compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/linkpoolio/chainlink-node-rewards.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/linkpoolio/chainlink-node-rewards/issues"
+  },
+  "homepage": "https://github.com/linkpoolio/chainlink-node-rewards#readme",
+  "devDependencies": {
+    "@typechain/ethers-v5": "^1.0.0",
+    "@types/bn.js": "^4.11.6",
+    "@types/chai": "^4.2.12",
+    "@types/inquirer": "^7.3.1",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.11.2",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.1.1",
+    "ethers": "^5.0.19",
+    "hardhat": "^2.0.0",
+    "hardhat-deploy": "^0.7.0-beta.39",
+    "hardhat-deploy-ethers": "^0.3.0-beta.5",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.59",
+    "ts-node": "^9.0.0",
+    "typechain": "^2.0.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^3.2.1-solc-0.7",
+    "axios": "^0.21.1",
+    "inquirer": "^7.3.3"
+  }
+}
