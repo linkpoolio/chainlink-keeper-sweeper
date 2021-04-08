@@ -7,7 +7,13 @@ import "../interfaces/IERC677Receiver.sol";
 import "../interfaces/IERC677.sol";
 
 contract ERC677 is IERC677, ERC20 {
-    constructor(string memory tokenName, string memory tokenSymbol) ERC20(tokenName, tokenSymbol) {}
+    constructor(
+        string memory tokenName,
+        string memory tokenSymbol,
+        uint256 totalSupply
+    ) ERC20(tokenName, tokenSymbol) {
+        _mint(msg.sender, totalSupply * (10**uint256(decimals())));
+    }
 
     function transferAndCall(
         address _to,
