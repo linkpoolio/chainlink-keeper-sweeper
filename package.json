@@ -6,7 +6,11 @@
   "scripts": {
     "test": "npx hardhat test --network hardhat",
     "start": "npx hardhat node --network hardhat",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "deploy-node-rewards": "npx hardhat deploy --tags NodeRewards",
+    "deploy-flux-withdraw": "npx hardhat deploy --tags Flux",
+    "deploy-ocr-withdraw": "npx hardhat deploy --tags OCR",
+    "deploy-oracle-withdraw": "npx hardhat deploy --tags Oracle"
   },
   "repository": {
     "type": "git",
