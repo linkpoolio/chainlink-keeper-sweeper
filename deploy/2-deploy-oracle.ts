@@ -7,15 +7,15 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const { minToWithdraw } = config.OracleWithdraw
+  const { minToWithdraw } = config.OracleSweeper
 
-  const nodeRewards = await ethers.getContract('NodeRewards')
+  const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('OracleWithdraw', {
+  await deploy('OracleSweeper', {
     from: deployer,
     log: true,
-    args: [nodeRewards.address, ethers.utils.parseEther(minToWithdraw.toString())],
+    args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString())],
   })
 }
 
-module.exports.tags = ['Oracle']
+module.exports.tags = ['OracleSweeper']

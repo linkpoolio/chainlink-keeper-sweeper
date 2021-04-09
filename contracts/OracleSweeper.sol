@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.7.4;
 
-import {IOracle} from "./interfaces/INodeWithdraw.sol";
-import "./BaseWithdraw.sol";
+import "./interfaces/IOracle.sol";
+import "./Sweeper.sol";
 
 /**
- * @title OracleWithdraw
+ * @title OracleSweeper
  * @dev Handles withdrawing of rewards from oracle Chainlink contracts.
  */
-contract OracleWithdraw is BaseWithdraw {
-    constructor(address _nodeRewards, uint256 _minToWithdraw) BaseWithdraw(_nodeRewards, _minToWithdraw) {}
+contract OracleSweeper is Sweeper {
+    constructor(address _nodeRewards, uint256 _minToWithdraw) Sweeper(_nodeRewards, _minToWithdraw) {}
 
     /**
      * @dev returns the withdrawable amount for each oracle

@@ -1,18 +1,18 @@
 export const config = {
-  NodeRewards: {
+  Keep3rSweeper: {
     rewardsWallet: '0x240BaE5A27233Fd3aC5440B5a598467725F7D1cd',
     minRewardsForPayment: 1000,
     batchSize: 20,
   },
-  FluxAggregatorWithdraw: {
+  FluxAggregatorSweeper: {
     minToWithdraw: 100,
     oracle: '0x240BaE5A27233Fd3aC5440B5a598467725F7D1cd',
   },
-  OffchainAggregatorWithdraw: {
+  OffchainAggregatorSweeper: {
     minToWithdraw: 100,
     transmitter: '0x240BaE5A27233Fd3aC5440B5a598467725F7D1cd',
   },
-  OracleWithdraw: {
+  OracleSweeper: {
     minToWithdraw: 100,
   },
 }

@@ -8,15 +8,15 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const { minToWithdraw, oracle } = config.FluxAggregatorWithdraw
+  const { minToWithdraw, oracle } = config.FluxAggregatorSweeper
 
-  const nodeRewards = await ethers.getContract('NodeRewards')
+  const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('FluxAggregatorWithdraw', {
+  await deploy('FluxAggregatorSweeper', {
     from: deployer,
     log: true,
-    args: [nodeRewards.address, ethers.utils.parseEther(minToWithdraw.toString()), oracle],
+    args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString()), oracle],
   })
 }
 
-module.exports.tags = ['Flux']
+module.exports.tags = ['FluxAggregatorSweeper']

@@ -4,10 +4,10 @@ pragma solidity 0.7.4;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 /**
- * @title BaseWithdraw
- * @dev Base withdraw contract that other withdraw contracts should inherit from
+ * @title Sweeper
+ * @dev Base sweeper contract that other sweeper contracts should inherit from
  */
-abstract contract BaseWithdraw is Ownable {
+abstract contract Sweeper is Ownable {
     uint256 public minToWithdraw;
 
     address[] public contracts;

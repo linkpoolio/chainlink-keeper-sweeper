@@ -7,10 +7,10 @@
     "test": "npx hardhat test --network hardhat",
     "start": "npx hardhat node --network hardhat",
     "compile": "npx hardhat compile",
-    "deploy-node-rewards": "npx hardhat deploy --tags NodeRewards",
-    "deploy-flux-withdraw": "npx hardhat deploy --tags Flux",
-    "deploy-ocr-withdraw": "npx hardhat deploy --tags OCR",
-    "deploy-oracle-withdraw": "npx hardhat deploy --tags Oracle"
+    "deploy-keep3r-sweeper": "npx hardhat deploy --tags Keep3rSweeper",
+    "deploy-flux-sweeper": "npx hardhat deploy --tags FluxAggregatorSweeper",
+    "deploy-ocr-sweeper": "npx hardhat deploy --tags OffchainAggregatorSweeper",
+    "deploy-oracle-sweeper": "npx hardhat deploy --tags OracleSweeper"
   },
   "repository": {
     "type": "git",

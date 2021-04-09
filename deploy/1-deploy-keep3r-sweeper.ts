@@ -7,7 +7,7 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const { rewardsWallet, minRewardsForPayment, batchSize } = config.NodeRewards
+  const { rewardsWallet, minRewardsForPayment, batchSize } = config.Keep3rSweeper
 
   let linkToken: any = await ethers.getContractOrNull('ERC677')
   if (!linkToken) {
@@ -19,7 +19,7 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
     linkToken = await ethers.getContract('ERC677')
   }
 
-  await deploy('NodeRewards', {
+  await deploy('Keep3rSweeper', {
     from: deployer,
     log: true,
     args: [
@@ -31,4 +31,4 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   })
 }
 
-module.exports.tags = ['NodeRewards']
+module.exports.tags = ['Keep3rSweeper']

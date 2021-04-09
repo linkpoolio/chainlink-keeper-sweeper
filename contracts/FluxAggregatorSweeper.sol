@@ -1,21 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.7.4;
 
-import {IFluxAggregator} from "./interfaces/INodeWithdraw.sol";
-import "./BaseWithdraw.sol";
+import "./interfaces/IFluxAggregator.sol";
+import "./Sweeper.sol";
 
 /**
- * @title FluxAggregatorWithdraw
+ * @title FluxAggregatorSweeper
  * @dev Handles withdrawing of rewards from flux aggregator Chainlink contracts.
  */
-contract FluxAggregatorWithdraw is BaseWithdraw {
+contract FluxAggregatorSweeper is Sweeper {
     address oracle;
 
     constructor(
         address _nodeRewards,
         uint256 _minTowithdraw,
         address _oracle
-    ) BaseWithdraw(_nodeRewards, _minTowithdraw) {
+    ) Sweeper(_nodeRewards, _minTowithdraw) {
         oracle = _oracle;
     }
 

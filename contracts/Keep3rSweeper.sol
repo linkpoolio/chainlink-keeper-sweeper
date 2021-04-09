@@ -7,17 +7,17 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./interfaces/IERC677.sol";
-import {IFactory} from "./interfaces/INodeWithdraw.sol";
+import "./interfaces/ISweeper.sol";
 
 /**
- * @title NodeRewards
+ * @title Keep3rSweeper
  * @dev Handles withdrawing of node rewards from Chainlink contracts.
  */
-contract NodeRewards is Ownable {
+contract Keep3rSweeper is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC677;
 
-    address[] public factories;
+    address[] public sweepers;
 
     address public rewardsWallet;
     IERC677 public rewardsToken;
@@ -44,14 +44,14 @@ contract NodeRewards is Ownable {
      * @return whether to perform upkeep and calldata to use
      **/
     function checkUpkeep(bytes calldata _checkData) external view returns (bool, bytes memory) {
-        uint256[][] memory performData = new uint256[][](factories.length);
+        uint256[][] memory performData = new uint256[][](sweepers.length);
         uint256 totalRewards;
         uint256 batch = 0;
 
-        for (uint i = 0; i < factories.length && batch < batchSize; i++) {
-            IFactory factory = IFactory(factories[i]);
-            uint256 minToWithdraw = factory.minToWithdraw();
-            uint256[] memory canWithdraw = factory.withdrawable();
+        for (uint i = 0; i < sweepers.length && batch < batchSize; i++) {
+            ISweeper sweeper = ISweeper(sweepers[i]);
+            uint256 minToWithdraw = sweeper.minToWithdraw();
+            uint256[] memory canWithdraw = sweeper.withdrawable();
 
             uint256 canWithdrawCount;
             for (uint j = 0; j < canWithdraw.length && batch < batchSize; j++) {
@@ -91,10 +91,10 @@ contract NodeRewards is Ownable {
 
     /**
      * @dev withdraw rewards for selected contracts
-     * @param _factoryIdxs indexes of the contracts
+     * @param _sweeperIdxs indexes of the contracts
      **/
-    function withdraw(uint256[][] calldata _factoryIdxs) external {
-        _withdraw(abi.encode(_factoryIdxs));
+    function withdraw(uint256[][] calldata _sweeperIdxs) external {
+        _withdraw(abi.encode(_sweeperIdxs));
 
         uint256 rewards = rewardsToken.balanceOf(address(this));
         require(rewards > 0, "Rewards must be > 0");
@@ -108,29 +108,29 @@ contract NodeRewards is Ownable {
      * @return total withdrawable balance
      **/
     function withdrawable() external view returns (uint256[][] memory) {
-        uint256[][] memory _withdrawable = new uint256[][](factories.length);
-        for (uint i = 0; i < factories.length; i++) {
-            _withdrawable[i] = IFactory(factories[i]).withdrawable();
+        uint256[][] memory _withdrawable = new uint256[][](sweepers.length);
+        for (uint i = 0; i < sweepers.length; i++) {
+            _withdrawable[i] = ISweeper(sweepers[i]).withdrawable();
         }
         return _withdrawable;
     }
 
     /**
-     * @dev adds factory address
-     * @param _factory address to add
+     * @dev adds sweeper address
+     * @param _sweeper address to add
      **/
-    function addFactory(address _factory) external onlyOwner() {
-        factories.push(_factory);
+    function addSweeper(address _sweeper) external onlyOwner() {
+        sweepers.push(_sweeper);
     }
 
     /**
-     * @dev removes factory address
-     * @param _index index of factory to remove
+     * @dev removes sweeper address
+     * @param _index index of sweeper to remove
      **/
-    function removeFactory(uint256 _index) external onlyOwner() {
-        require(_index < factories.length, "Factory does not exist");
-        factories[_index] = factories[factories.length - 1];
-        delete factories[factories.length - 1];
+    function removeSweeper(uint256 _index) external onlyOwner() {
+        require(_index < sweepers.length, "Sweeper does not exist");
+        sweepers[_index] = sweepers[sweepers.length - 1];
+        delete sweepers[sweepers.length - 1];
     }
 
     /**
@@ -151,15 +151,15 @@ contract NodeRewards is Ownable {
 
     /**
      * @dev withdraw rewards for selected contracts
-     * @param _factoryIdxs indexes of the contracts
+     * @param _sweeperIdxs indexes of the contracts
      **/
-    function _withdraw(bytes memory _factoryIdxs) private {
-        uint256[][] memory factoryIdxs = abi.decode(_factoryIdxs, (uint256[][]));
-        require(factoryIdxs.length <= factories.length, "FactoryIdxs must be <= factories length");
+    function _withdraw(bytes memory _sweeperIdxs) private {
+        uint256[][] memory sweeperIdxs = abi.decode(_sweeperIdxs, (uint256[][]));
+        require(sweeperIdxs.length <= sweepers.length, "SweeperIdxs must be <= sweepers length");
 
-        for (uint i = 0; i < factoryIdxs.length; i++) {
-            if (factoryIdxs[i].length > 0) {
-                IFactory(factories[i]).withdraw(factoryIdxs[i]);
+        for (uint i = 0; i < sweeperIdxs.length; i++) {
+            if (sweeperIdxs[i].length > 0) {
+                ISweeper(sweepers[i]).withdraw(sweeperIdxs[i]);
             }
         }
     }

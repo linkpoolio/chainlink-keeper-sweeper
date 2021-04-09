@@ -2,14 +2,14 @@
 pragma solidity 0.7.4;
 
 import "./interfaces/IERC677.sol";
-import {IOffchainAggregator} from "./interfaces/INodeWithdraw.sol";
-import "./BaseWithdraw.sol";
+import "./interfaces/IOffchainAggregator.sol";
+import "./Sweeper.sol";
 
 /**
- * @title OffchainAggregatorWithdraw
+ * @title OffchainAggregatorSweeper
  * @dev Handles withdrawing of rewards from OCR Chainlink contracts.
  */
-contract OffchainAggregatorWithdraw is BaseWithdraw {
+contract OffchainAggregatorSweeper is Sweeper {
     IERC677 token;
     address transmitter;
 
@@ -18,7 +18,7 @@ contract OffchainAggregatorWithdraw is BaseWithdraw {
         uint256 _minToWithdraw,
         address _transmitter,
         address _token
-    ) BaseWithdraw(_nodeRewards, _minToWithdraw) {
+    ) Sweeper(_nodeRewards, _minToWithdraw) {
         transmitter = _transmitter;
         token = IERC677(_token);
     }

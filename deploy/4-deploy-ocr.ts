@@ -8,16 +8,16 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const { minToWithdraw, transmitter } = config.OffchainAggregatorWithdraw
+  const { minToWithdraw, transmitter } = config.OffchainAggregatorSweeper
 
   const linkToken = await ethers.getContract('ERC677')
-  const nodeRewards = await ethers.getContract('NodeRewards')
+  const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('OffchainAggregatorWithdraw', {
+  await deploy('OffchainAggregatorSweeper', {
     from: deployer,
     log: true,
     args: [
-      nodeRewards.address,
+      keep3rSweeper.address,
       ethers.utils.parseEther(minToWithdraw.toString()),
       transmitter,
       linkToken.address,
@@ -25,4 +25,4 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   })
 }
 
-module.exports.tags = ['OCR']
+module.exports.tags = ['OffchainAggregatorSweeper']
