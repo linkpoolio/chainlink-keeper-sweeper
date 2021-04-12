@@ -13,7 +13,8 @@
     "deploy-ocr-sweeper": "npx hardhat deploy --tags OffchainAggregatorSweeper",
     "deploy-oracle-sweeper": "npx hardhat deploy --tags OracleSweeper",
     "sweeper-add-contracts": "npx ts-node --files scripts/sweeper-add-contracts.ts",
-    "transfer-admin-from-sweeper": "npx ts-node --files scripts/transfer-admin-from-sweeper.ts"
+    "transfer-admin-from-sweeper": "npx ts-node --files scripts/transfer-admin-from-sweeper.ts",
+    "transfer-admin-to-sweeper": "npx ts-node --files scripts/transfer-admin-to-sweeper.ts"
   },
   "repository": {
     "type": "git",

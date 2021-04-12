@@ -3,7 +3,7 @@ pragma solidity 0.7.4;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ExampleFluxAggregator {
+contract FluxAggregator {
     IERC20 public token;
     address[] public oracles;
     mapping(address => address) private admins;
@@ -43,4 +43,6 @@ contract ExampleFluxAggregator {
         require(msg.sender == admins[_oracle], "Must be admin");
         admins[_oracle] = _newAdmin;
     }
+
+    function acceptAdmin(address _oracle) external {}
 }

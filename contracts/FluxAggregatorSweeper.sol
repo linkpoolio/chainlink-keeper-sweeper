@@ -9,7 +9,7 @@ import "./Sweeper.sol";
  * @dev Handles withdrawing of rewards from flux aggregator Chainlink contracts.
  */
 contract FluxAggregatorSweeper is Sweeper {
-    address oracle;
+    address public oracle;
 
     constructor(
         address _nodeRewards,

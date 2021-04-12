@@ -10,8 +10,8 @@ import "./Sweeper.sol";
  * @dev Handles withdrawing of rewards from OCR Chainlink contracts.
  */
 contract OffchainAggregatorSweeper is Sweeper {
-    IERC677 token;
-    address transmitter;
+    IERC677 public token;
+    address public transmitter;
 
     constructor(
         address _nodeRewards,

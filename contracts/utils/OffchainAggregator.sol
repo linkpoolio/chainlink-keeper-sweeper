@@ -3,7 +3,7 @@ pragma solidity 0.7.4;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ExampleOffchainAggregator {
+contract OffchainAggregator {
     IERC20 public token;
     address[] public transmitters;
     mapping(address => address) private payees;
@@ -34,4 +34,6 @@ contract ExampleOffchainAggregator {
         require(msg.sender == payees[_transmitter], "only current payee can update");
         payees[_transmitter] = _proposed;
     }
+
+    function acceptPayeeship(address _transmitter) external {}
 }

@@ -4,9 +4,9 @@ import { config } from '../config/deploy'
 async function main() {
   console.log('**** Setting up test environment ****\n')
 
-  const Oracle = await ethers.getContractFactory('ExampleOracle')
-  const FluxAggregator = await ethers.getContractFactory('ExampleFluxAggregator')
-  const OffchainAggregator = await ethers.getContractFactory('ExampleOffchainAggregator')
+  const Oracle = await ethers.getContractFactory('Oracle')
+  const FluxAggregator = await ethers.getContractFactory('FluxAggregator')
+  const OffchainAggregator = await ethers.getContractFactory('OffchainAggregator')
 
   const linkToken = await ethers.getContract('ERC677')
   const oracleSweeper = await ethers.getContract('OracleSweeper')
