@@ -12,11 +12,13 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('FluxAggregatorSweeper', {
+  const sweeper = await deploy('FluxAggregatorSweeper', {
     from: deployer,
     log: true,
     args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString()), oracle],
   })
+
+  await keep3rSweeper.addSweeper(sweeper.address)
 }
 
 module.exports.tags = ['FluxAggregatorSweeper']

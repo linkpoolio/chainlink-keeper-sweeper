@@ -11,11 +11,13 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('OracleSweeper', {
+  const sweeper = await deploy('OracleSweeper', {
     from: deployer,
     log: true,
     args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString())],
   })
+
+  await keep3rSweeper.addSweeper(sweeper.address)
 }
 
 module.exports.tags = ['OracleSweeper']

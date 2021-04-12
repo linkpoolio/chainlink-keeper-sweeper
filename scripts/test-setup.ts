@@ -20,27 +20,29 @@ async function main() {
   for (let i = 0; i < 10; i++) {
     let oracle = await Oracle.deploy(linkToken.address)
     await oracle.transferOwnership(oracleSweeper.address)
-    oracles.push(oracle)
+    await linkToken.transfer(oracle.address, ethers.utils.parseEther('100'))
+    oracles.push(oracle.address)
 
-    fluxAggregators.push(
-      await FluxAggregator.deploy(
-        linkToken.address,
-        [config.FluxAggregatorSweeper.oracle],
-        [fluxSweeper.address]
-      )
+    let fluxAggregator = await FluxAggregator.deploy(
+      linkToken.address,
+      [config.FluxAggregatorSweeper.oracle],
+      [fluxSweeper.address]
     )
-    offchainAggregators.push(
-      await OffchainAggregator.deploy(
-        linkToken.address,
-        [config.OffchainAggregatorSweeper.transmitter],
-        [ocrSweeper.address]
-      )
+    await linkToken.transfer(fluxAggregator.address, ethers.utils.parseEther('100'))
+    fluxAggregators.push(fluxAggregator.address)
+
+    let offchainAggregator = await OffchainAggregator.deploy(
+      linkToken.address,
+      [config.OffchainAggregatorSweeper.transmitter],
+      [ocrSweeper.address]
     )
+    await linkToken.transfer(offchainAggregator.address, ethers.utils.parseEther('100'))
+    offchainAggregators.push(offchainAggregator.address)
   }
 
-  await oracleSweeper.addContracts(oracles.map((oracle) => oracle.address))
-  await fluxSweeper.addContracts(fluxAggregators.map((flux) => flux.address))
-  await ocrSweeper.addContracts(offchainAggregators.map((ocr) => ocr.address))
+  await oracleSweeper.addContracts(oracles)
+  await fluxSweeper.addContracts(fluxAggregators)
+  await ocrSweeper.addContracts(offchainAggregators)
 }
 
 main()

@@ -13,7 +13,7 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const linkToken = await ethers.getContract('ERC677')
   const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
-  await deploy('OffchainAggregatorSweeper', {
+  const sweeper = await deploy('OffchainAggregatorSweeper', {
     from: deployer,
     log: true,
     args: [
@@ -23,6 +23,8 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
       linkToken.address,
     ],
   })
+
+  await keep3rSweeper.addSweeper(sweeper.address)
 }
 
 module.exports.tags = ['OffchainAggregatorSweeper']
