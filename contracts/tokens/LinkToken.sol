@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IERC677Receiver.sol";
 import "../interfaces/IERC677.sol";
 
-contract ERC677 is IERC677, ERC20 {
+contract LinkToken is IERC677, ERC20 {
     constructor(
         string memory tokenName,
         string memory tokenSymbol,

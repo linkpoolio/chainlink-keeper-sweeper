@@ -29,7 +29,7 @@ describe('Keep3rSweeper', () => {
     account0 = await accounts[0].getAddress()
     rewardsWallet = await accounts[2].getAddress()
 
-    const Token = await ethers.getContractFactory('ERC677')
+    const Token = await ethers.getContractFactory('LinkToken')
     token = await Token.deploy('Chainlink', 'LINK', '1000000000')
 
     const Keep3rSweeper = await ethers.getContractFactory('Keep3rSweeper')
@@ -43,7 +43,7 @@ describe('Keep3rSweeper', () => {
     const OracleSweeper = await ethers.getContractFactory('OracleSweeper')
     oracleSweeper = await OracleSweeper.deploy(keep3rSweeper.address, ethers.utils.parseEther('5'))
 
-    const Oracle = await ethers.getContractFactory('ExampleOracle')
+    const Oracle = await ethers.getContractFactory('Oracle')
     oracle = await Oracle.deploy(token.address)
     await oracle.transferOwnership(oracleSweeper.address)
     oracle2 = await Oracle.deploy(token.address)
@@ -56,7 +56,7 @@ describe('Keep3rSweeper', () => {
       oracle.address
     )
 
-    const FluxAggregator = await ethers.getContractFactory('ExampleFluxAggregator')
+    const FluxAggregator = await ethers.getContractFactory('FluxAggregator')
     fluxAggregator = await FluxAggregator.deploy(
       token.address,
       [oracle.address],
@@ -76,7 +76,7 @@ describe('Keep3rSweeper', () => {
       token.address
     )
 
-    const OffchainAggregator = await ethers.getContractFactory('ExampleOffchainAggregator')
+    const OffchainAggregator = await ethers.getContractFactory('OffchainAggregator')
     offchainAggregator = await OffchainAggregator.deploy(
       token.address,
       [oracle.address],

@@ -10,7 +10,7 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   const { minToWithdraw, transmitter } = config.OffchainAggregatorSweeper
 
-  const linkToken = await ethers.getContract('ERC677')
+  const linkToken = await ethers.getContract('LinkToken')
   const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
 
   const sweeper = await deploy('OffchainAggregatorSweeper', {

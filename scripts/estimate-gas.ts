@@ -12,7 +12,7 @@ async function setup() {
 
   await deployments.fixture()
 
-  linkToken = await ethers.getContract('ERC677')
+  linkToken = await ethers.getContract('LinkToken')
   keep3rSweeper = await ethers.getContract('Keep3rSweeper')
   const oracleSweeper = await ethers.getContract('OracleSweeper')
   fluxAggregatorSweeper = await ethers.getContract('FluxAggregatorSweeper')

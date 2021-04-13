@@ -4,7 +4,7 @@ async function main() {
   console.log('**** Sweeping rewards ****\n')
 
   const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
-  const linkToken = await ethers.getContract('ERC677')
+  const linkToken = await ethers.getContract('LinkToken')
 
   const rewardsWallet = await keep3rSweeper.rewardsWallet()
   const startingBalance = await linkToken.balanceOf(rewardsWallet)

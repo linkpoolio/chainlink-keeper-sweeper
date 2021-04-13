@@ -8,7 +8,7 @@ async function main() {
   const FluxAggregator = await ethers.getContractFactory('FluxAggregator')
   const OffchainAggregator = await ethers.getContractFactory('OffchainAggregator')
 
-  const linkToken = await ethers.getContract('ERC677')
+  const linkToken = await ethers.getContract('LinkToken')
   const oracleSweeper = await ethers.getContract('OracleSweeper')
   const fluxSweeper = await ethers.getContract('FluxAggregatorSweeper')
   const ocrSweeper = await ethers.getContract('OffchainAggregatorSweeper')

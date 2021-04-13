@@ -9,14 +9,14 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   const { rewardsWallet, minRewardsForPayment, batchSize } = config.Keep3rSweeper
 
-  let linkToken: any = await ethers.getContractOrNull('ERC677')
+  let linkToken: any = await ethers.getContractOrNull('LinkToken')
   if (!linkToken) {
-    await deploy('ERC677', {
+    await deploy('LinkToken', {
       from: deployer,
       log: true,
       args: ['Chainlink', 'LINK', 1000000000],
     })
-    linkToken = await ethers.getContract('ERC677')
+    linkToken = await ethers.getContract('LinkToken')
   }
 
   await deploy('Keep3rSweeper', {
