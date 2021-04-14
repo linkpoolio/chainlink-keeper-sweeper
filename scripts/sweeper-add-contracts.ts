@@ -64,9 +64,9 @@ async function main() {
 
   toAdd = toAdd.filter((contract) => !addedContracts.includes(contract.toLowerCase()))
 
-  for (let i = 0; i < toAdd.length; i += 50) {
+  for (let i = 0; i < toAdd.length; i += 40) {
     let gasPrice = await ethGasStation.get('')
-    await sweeper.addContracts(toAdd.slice(i, i + 50), { gasPrice: gasPrice.data.fastest / 10 })
+    await sweeper.addContracts(toAdd.slice(i, i + 40), { gasPrice: gasPrice.data.fastest / 10 })
   }
 
   console.log(`${toAdd.length} new contracts added\n`)
