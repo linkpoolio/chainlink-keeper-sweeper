@@ -72,10 +72,10 @@ This will add `oracleAddress` to `OracleSweeper` if not already added.
 New `FluxAggregator` contracts can be added to `FluxAggregatorSweeper` using:
 
 ```
-yarn sweeper-add-contracts FluxAggregator <oracleAddress>
+yarn sweeper-add-contracts FluxAggregator <walletAddress>
 ```
 
-This will query the [Chainlink Market](https://market.link/?network=1) for all of the `FluxAggregator` feeds associated with `oracleAddress` and add them to `FluxAggregatorSweeper` if not already added.
+This will query the [Chainlink Market](https://market.link/?network=1) for all of the `FluxAggregator` feeds associated with `walletAddress` and add them to `FluxAggregatorSweeper` if not already added.
 
 ### OffchainAggregator
 

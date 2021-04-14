@@ -4,40 +4,42 @@ import { ethGasStation } from '../api/ethGasStation'
 
 const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
 
-const addOracle = async (addedContracts, oracleAddress) => {
-  return !addedContracts.includes(oracleAddress.toLowerCase()) ? [oracleAddress] : []
-}
-
-const addFeeds = async (sweeperType, addedContracts, oracleOrWalletAddress) => {
-  const feedTypeName = sweeperType === 'FluxAggregator' ? 'FLUX_AGGREGATOR' : 'OFFCHAIN_AGGREGATOR'
-  const params =
-    sweeperType === 'FluxAggregator'
-      ? { oracleAddress: [oracleOrWalletAddress] }
-      : { walletAddress: [oracleOrWalletAddress] }
-
+const addFeeds = async (sweeperType, walletAddress) => {
   const totalFeeds = (
     await market.get('feeds', {
-      params: { networkId: 1, ...params },
+      params: { networkId: 1 },
     })
   ).data.totalCount
 
-  const feedsToAdd = []
+  let feedsToAdd = []
   for (let i = 1; (i - 1) * 50 < totalFeeds; i++) {
     let response = await market.get('feeds', {
-      params: { networkId: 1, size: 50, page: i, ...params },
+      params: { networkId: 1, size: 50, page: i },
     })
 
-    response.data.data.forEach((feed) => {
-      if (
-        !addedContracts.includes(feed.contractAddress.toLowerCase()) &&
-        feed.type.name === feedTypeName
-      ) {
-        feedsToAdd.push(feed.contractAddress)
-      }
-    })
+    let feeds = response.data.data
+
+    if (sweeperType === 'FluxAggregator') {
+      feeds = feeds.filter(
+        (feed) =>
+          feed.type.name === 'FLUX_AGGREGATOR' &&
+          feed.walletAddresses
+            ?.map((address) => address.toLowerCase())
+            .includes(walletAddress.toLowerCase())
+      )
+    } else if (sweeperType === 'OffchainAggregator') {
+      feeds = feeds.filter(
+        (feed) =>
+          feed.type.name === 'OFFCHAIN_AGGREGATOR' &&
+          feed.oracleAddresses
+            ?.map((address) => address.toLowerCase())
+            .includes(walletAddress.toLowerCase())
+      )
+    }
+    feedsToAdd = feedsToAdd.concat(feeds)
   }
 
-  return feedsToAdd
+  return feedsToAdd.map((feed) => feed.contractAddress)
 }
 
 async function main() {
@@ -55,10 +57,12 @@ async function main() {
 
   let toAdd = []
   if (sweeperType == 'Oracle') {
-    toAdd = await addOracle(addedContracts, oracleOrWalletAddress)
+    toAdd = [oracleOrWalletAddress]
   } else {
-    toAdd = await addFeeds(sweeperType, addedContracts, oracleOrWalletAddress)
+    toAdd = await addFeeds(sweeperType, oracleOrWalletAddress)
   }
+
+  toAdd = toAdd.filter((contract) => !addedContracts.includes(contract.toLowerCase()))
 
   for (let i = 0; i < toAdd.length; i += 50) {
     let gasPrice = await ethGasStation.get('')
