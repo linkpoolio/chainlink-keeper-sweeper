@@ -45,8 +45,8 @@ async function main() {
   }
 
   if (sweeperType !== 'Oracle') {
-    for (let i = 0; i < idxs.length; i += 50) {
-      await sweeper.acceptAdmin([0])
+    for (let i = 0; i < idxs.length; i += 30) {
+      await sweeper.acceptAdmin(idxs.slice(i, i + 30))
     }
   }
 

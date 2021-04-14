@@ -16,8 +16,8 @@ async function main() {
   const addedContracts = await sweeper.getContracts()
   const idxs = addedContracts.map((_contract, index) => index)
 
-  for (let i = 0; i < idxs.length; i += 50) {
-    await sweeper.transferAdmin(idxs.slice(i, i + 50), newAdmin)
+  for (let i = 0; i < idxs.length; i += 30) {
+    await sweeper.transferAdmin(idxs.slice(i, i + 30), newAdmin)
   }
 
   console.log(`Admin transferred for ${idxs.length} contracts\n`)
