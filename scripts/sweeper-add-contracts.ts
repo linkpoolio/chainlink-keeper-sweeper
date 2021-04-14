@@ -1,5 +1,6 @@
 import { ethers } from 'hardhat'
-import axios from 'axios'
+import { market } from '../api/market'
+import { ethGasStation } from '../api/ethGasStation'
 
 const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
 
@@ -13,14 +14,6 @@ const addFeeds = async (sweeperType, addedContracts, oracleOrWalletAddress) => {
     sweeperType === 'FluxAggregator'
       ? { oracleAddress: [oracleOrWalletAddress] }
       : { walletAddress: [oracleOrWalletAddress] }
-
-  const market = axios.create({
-    baseURL: 'https://market.link/v1/',
-    headers: {
-      'x-access-key-id': process.env.ACCESS_KEY_ID,
-      'x-secret-key': process.env.SECRET_KEY,
-    },
-  })
 
   const totalFeeds = (
     await market.get('feeds', {
@@ -68,7 +61,8 @@ async function main() {
   }
 
   for (let i = 0; i < toAdd.length; i += 50) {
-    await sweeper.addContracts(toAdd.slice(i, i + 50))
+    let gasPrice = await ethGasStation.get('')
+    await sweeper.addContracts(toAdd.slice(i, i + 50), { gasPrice: gasPrice.data.fastest / 10 })
   }
 
   console.log(`${toAdd.length} new contracts added\n`)

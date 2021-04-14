@@ -12,7 +12,12 @@ Installs dependencies.
 
 ## Setup
 
-Before you can get started you will have to set a few things up. Inside `hardhat.config.ts` you should add a provider url to the `networks` object for each network you would like to use. You should also replace `accounts[0]` with the private key of the address you will be using for contract deployments and running scripts. The default network used when deploying or running scripts is `localhost` so if you would like to use different network you should set the environment variable `HARDHAT_NETWORK` to a network listed in the `networks` object.
+Before you can get started you will have to set some things up:
+
+1. Inside `hardhat.config.ts` you should add a provider url to the `networks` object for each network you would like to use
+2. You should also replace `accounts[0]` with the private key of the address you will be using for contract deployments and running scripts
+3. The default network used when deploying or running scripts is `localhost` so if you would like to use different network you should set the environment variable `HARDHAT_NETWORK` to a network listed in the `networks` object
+4. In order to run most scripts you will need to set environment variable `ETH_GAS_API_KEY` which you can find [here](https://docs.ethgasstation.info/)
 
 ## Deployment
 
