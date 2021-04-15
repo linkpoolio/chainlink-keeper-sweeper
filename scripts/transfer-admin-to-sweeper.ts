@@ -44,7 +44,7 @@ async function main() {
     let contract = await ethers.getContractAt(sweeperType, addedContracts[i])
     let gasPrice = await ethGasStation.get('')
     let tx = await transferAdmin(contract, sweeper, nodeAddress, {
-      gasPrice: gasPrice.data.fastest / 10 + 10,
+      gasPrice: (gasPrice.data.fastest / 10 + 10) * 1000000000,
     })
     await tx.wait()
   }
@@ -53,7 +53,7 @@ async function main() {
     for (let i = 0; i < idxs.length; i += 30) {
       let gasPrice = await ethGasStation.get('')
       let tx = await sweeper.acceptAdmin(idxs.slice(i, i + 30), {
-        gasPrice: gasPrice.data.fastest / 10 + 10,
+        gasPrice: (gasPrice.data.fastest / 10 + 10) * 1000000000,
       })
       await tx.wait()
     }
