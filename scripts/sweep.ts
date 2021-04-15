@@ -13,7 +13,8 @@ async function main() {
 
   while (checkUpkeep[0]) {
     let toWithdraw = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
-    await keep3rSweeper.withdraw(toWithdraw)
+    let tx = await keep3rSweeper.withdraw(toWithdraw)
+    await tx.wait()
     checkUpkeep = await keep3rSweeper.checkUpkeep('0x00')
   }
 

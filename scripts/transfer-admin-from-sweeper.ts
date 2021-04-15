@@ -19,9 +19,10 @@ async function main() {
 
   for (let i = 0; i < idxs.length; i += 30) {
     let gasPrice = await ethGasStation.get('')
-    await sweeper.transferAdmin(idxs.slice(i, i + 30), newAdmin, {
+    let tx = await sweeper.transferAdmin(idxs.slice(i, i + 30), newAdmin, {
       gasPrice: gasPrice.data.fastest / 10 + 10,
     })
+    await tx.wait()
   }
 
   console.log(`Admin transferred for ${idxs.length} contracts\n`)

@@ -24,7 +24,8 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
     ],
   })
 
-  await keep3rSweeper.addSweeper(sweeper.address)
+  const tx = await keep3rSweeper.addSweeper(sweeper.address)
+  await tx.wait()
 }
 
 module.exports.tags = ['OffchainAggregatorSweeper']

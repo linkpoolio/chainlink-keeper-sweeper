@@ -17,7 +17,8 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
     args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString())],
   })
 
-  await keep3rSweeper.addSweeper(sweeper.address)
+  const tx = await keep3rSweeper.addSweeper(sweeper.address)
+  await tx.wait()
 }
 
 module.exports.tags = ['OracleSweeper']
