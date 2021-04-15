@@ -66,7 +66,9 @@ async function main() {
 
   for (let i = 0; i < toAdd.length; i += 40) {
     let gasPrice = await ethGasStation.get('')
-    await sweeper.addContracts(toAdd.slice(i, i + 40), { gasPrice: gasPrice.data.fastest / 10 })
+    await sweeper.addContracts(toAdd.slice(i, i + 40), {
+      gasPrice: gasPrice.data.fastest / 10 + 10,
+    })
   }
 
   console.log(`${toAdd.length} new contracts added\n`)
