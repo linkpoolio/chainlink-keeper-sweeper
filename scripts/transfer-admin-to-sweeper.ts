@@ -4,15 +4,45 @@ import { ethGasStation } from '../api/ethGasStation'
 const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
 
 const transferOracle = async (oracle, sweeper) => {
-  return oracle.transferOwnership(sweeper.address)
+  let gasPrice = await ethGasStation.get('')
+
+  try {
+    let tx = await oracle.transferOwnership(sweeper.address, {
+      gasPrice: (gasPrice.data.fastest / 10 + 20) * 1000000000,
+    })
+    await tx.wait()
+  } catch (error) {
+    return false
+  }
+  return true
 }
 
 const transferFluxAggregator = async (fluxAggregator, sweeper, nodeAddress) => {
-  return fluxAggregator.transferAdmin(nodeAddress, sweeper.address)
+  let gasPrice = await ethGasStation.get('')
+
+  try {
+    let tx = await fluxAggregator.transferAdmin(nodeAddress, sweeper.address, {
+      gasPrice: (gasPrice.data.fastest / 10 + 20) * 1000000000,
+    })
+    await tx.wait()
+  } catch (error) {
+    return false
+  }
+  return true
 }
 
 const transferOffchainAggregator = async (offchainAggregator, sweeper, nodeAddress) => {
-  return offchainAggregator.transferPayeeship(nodeAddress, sweeper.address)
+  let gasPrice = await ethGasStation.get('')
+
+  try {
+    let tx = await offchainAggregator.transferPayeeship(nodeAddress, sweeper.address, {
+      gasPrice: (gasPrice.data.fastest / 10 + 20) * 1000000000,
+    })
+    await tx.wait()
+  } catch (error) {
+    return false
+  }
+  return true
 }
 
 async function main() {
@@ -26,7 +56,6 @@ async function main() {
 
   const sweeper = await ethers.getContract(`${sweeperType}Sweeper`)
   const addedContracts = await sweeper.getContracts()
-  const idxs = addedContracts.map((_contract, index) => index)
 
   let transferAdmin
   let nodeAddress
@@ -40,26 +69,31 @@ async function main() {
     nodeAddress = await sweeper.transmitter()
   }
 
+  //const idxsToAccept = []
+  const idxs = addedContracts.map((_contract, index) => index)
   for (let i = 0; i < addedContracts.length; i++) {
     let contract = await ethers.getContractAt(sweeperType, addedContracts[i])
-    let gasPrice = await ethGasStation.get('')
-    let tx = await transferAdmin(contract, sweeper, nodeAddress, {
-      gasPrice: (gasPrice.data.fastest / 10 + 10) * 1000000000,
-    })
-    await tx.wait()
+
+    let txSuccess = await transferAdmin(contract, sweeper, nodeAddress)
+
+    /*
+    if (txSuccess) {
+      idxsToAccept.push(i)
+    }
+    */
   }
 
   if (sweeperType !== 'Oracle') {
     for (let i = 0; i < idxs.length; i += 30) {
       let gasPrice = await ethGasStation.get('')
       let tx = await sweeper.acceptAdmin(idxs.slice(i, i + 30), {
-        gasPrice: (gasPrice.data.fastest / 10 + 10) * 1000000000,
+        gasPrice: (gasPrice.data.fastest / 10 + 20) * 1000000000,
       })
       await tx.wait()
     }
   }
 
-  console.log(`Admin transferred for ${addedContracts.length} contracts\n`)
+  console.log(`Admin transferred for ${idxs.length} contracts\n`)
 }
 
 main()
