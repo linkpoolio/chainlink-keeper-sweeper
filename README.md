@@ -17,7 +17,6 @@ Before you can get started you will have to set some things up:
 1. Inside `hardhat.config.ts` you should add a provider url to the `networks` object for each network you would like to use
 2. You should also replace `accounts[0]` with the private key of the address you will be using for contract deployments and running scripts
 3. The default network used when deploying or running scripts is `localhost` so if you would like to use different network you should set the environment variable `HARDHAT_NETWORK` to a network listed in the `networks` object
-4. In order to run most scripts you will need to set environment variable `ETH_GAS_API_KEY` which you can find [here](https://docs.ethgasstation.info/)
 
 ## Deployment
 
@@ -89,7 +88,7 @@ This will query the [Chainlink Market](https://market.link/?network=1) for all o
 
 ## Tranferring Admin to Sweepers
 
-In order for a sweeper to be able to withdraw from contracts, admin privilieges must be transferred to the sweeper. The following scripts will attempt to transfer and accept admin privileges for all contracts that have been added to the respective sweeper. If some of the contracts have already had admin transferred, the script will fail.
+In order for a sweeper to be able to withdraw from contracts, admin privilieges must be transferred to the sweeper. The following scripts will transfer and accept admin privileges for all contracts that have been added to the respective sweeper. If the script is cancelled, when running again it will transfer admin for all contracts again even if it partially completed the last time.
 
 ### Oracle
 
@@ -97,7 +96,7 @@ In order for a sweeper to be able to withdraw from contracts, admin privilieges 
 yarn transfer-admin-to-sweeper Oracle
 ```
 
-This will attempt to transfer ownership for all contracts added to `OracleSweeper`.
+This will transfer ownership for all contracts added to `OracleSweeper`.
 
 ### FluxAggregator
 
@@ -105,7 +104,7 @@ This will attempt to transfer ownership for all contracts added to `OracleSweepe
 yarn transfer-admin-to-sweeper FluxAggregator
 ```
 
-This will attempt to transfer and accept admin for all contracts added to `FluxAggregatorSweeper`.
+This will transfer and accept admin for all contracts added to `FluxAggregatorSweeper`.
 
 ### OffchainAggregator
 
@@ -113,7 +112,7 @@ This will attempt to transfer and accept admin for all contracts added to `FluxA
 yarn transfer-admin-to-sweeper OffchainAggregator
 ```
 
-This will attempt to transfer and accept payeeship for all contracts added to `OffchainAggregatorSweeper`.
+This will transfer and accept payeeship for all contracts added to `OffchainAggregatorSweeper`.
 
 ## Withdrawing Rewards
 

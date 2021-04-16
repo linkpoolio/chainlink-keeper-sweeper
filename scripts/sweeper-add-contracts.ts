@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { market } from '../api/market'
-import { ethGasStation } from '../api/ethGasStation'
+import { ethGas } from '../api/ethGas'
 
 const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
 
@@ -65,9 +65,9 @@ async function main() {
   toAdd = toAdd.filter((contract) => !addedContracts.includes(contract.toLowerCase()))
 
   for (let i = 0; i < toAdd.length; i += 40) {
-    let gasPrice = await ethGasStation.get('')
+    let gasPrice = await ethGas.get('')
     let tx = await sweeper.addContracts(toAdd.slice(i, i + 40), {
-      gasPrice: (gasPrice.data.fastest / 10 + 10) * 1000000000,
+      gasPrice: gasPrice.data.data.rapid + 10000000000,
     })
     await tx.wait()
   }
