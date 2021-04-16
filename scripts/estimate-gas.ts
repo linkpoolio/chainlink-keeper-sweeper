@@ -2,18 +2,16 @@ import { deployments, ethers } from 'hardhat'
 import { Contract } from 'ethers'
 import { config } from '../config/deploy'
 
-let keep3rSweeper: Contract
+let keeperSweeper: Contract
 let linkToken: Contract
 let fluxAggregatorSweeper: Contract
 let contracts: string[]
 
 async function setup() {
-  const node = config.FluxAggregatorSweeper.oracle
-
   await deployments.fixture()
 
   linkToken = await ethers.getContract('LinkToken')
-  keep3rSweeper = await ethers.getContract('Keep3rSweeper')
+  keeperSweeper = await ethers.getContract('KeeperSweeper')
   const oracleSweeper = await ethers.getContract('OracleSweeper')
   fluxAggregatorSweeper = await ethers.getContract('FluxAggregatorSweeper')
   const offchainAggregatorSweeper = await ethers.getContract('OffchainAggregatorSweeper')
@@ -34,7 +32,7 @@ async function setup() {
 
     let fluxAggregator = await FluxAggregator.deploy(
       linkToken.address,
-      [node],
+      [config.FluxAggregatorSweeper.oracle],
       [fluxAggregatorSweeper.address]
     )
     await linkToken.transfer(fluxAggregator.address, ethers.utils.parseEther('100'))
@@ -42,7 +40,7 @@ async function setup() {
 
     let offchainAggregator = await OffchainAggregator.deploy(
       linkToken.address,
-      [node],
+      [config.OffchainAggregatorSweeper.transmitter],
       [offchainAggregatorSweeper.address]
     )
     await linkToken.transfer(offchainAggregator.address, ethers.utils.parseEther('100'))
@@ -60,20 +58,20 @@ async function main() {
   await setup()
   console.log('**** GAS ESTIMATES ****\n')
 
-  let checkUpkeep = await keep3rSweeper.checkUpkeep('0x00')
+  let checkUpkeep = await keeperSweeper.checkUpkeep('0x00')
   let toWithdraw = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
 
   console.log(
     'withdraw rewards (30 contracts) -> ',
-    (await keep3rSweeper.estimateGas.withdraw(toWithdraw)).toNumber().toLocaleString()
+    (await keeperSweeper.estimateGas.withdraw(toWithdraw)).toNumber().toLocaleString()
   )
 
-  await keep3rSweeper.withdraw(toWithdraw)
+  await keeperSweeper.withdraw(toWithdraw)
   await linkToken.transfer(contracts[0], ethers.utils.parseEther('100'))
 
   console.log(
     'withdraw rewards (1 contract) -> ',
-    (await keep3rSweeper.estimateGas.withdraw([[0], [], []])).toNumber().toLocaleString()
+    (await keeperSweeper.estimateGas.withdraw([[0], [], []])).toNumber().toLocaleString()
   )
 
   console.log(

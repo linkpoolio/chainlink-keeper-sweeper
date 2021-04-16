@@ -1,5 +1,5 @@
 {
-  "name": "chainlink-keep3r-sweeper",
+  "name": "chainlink-keeper-sweeper",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "compile": "npx hardhat compile",
     "test-setup": "npx ts-node --files scripts/test-setup.ts",
     "estimate-gas": "npx hardhat run --network hardhat scripts/estimate-gas.ts",
-    "deploy-keep3r-sweeper": "npx hardhat deploy --tags Keep3rSweeper",
+    "deploy-keeper-sweeper": "npx hardhat deploy --tags KeeperSweeper",
     "deploy-flux-sweeper": "npx hardhat deploy --tags FluxAggregatorSweeper",
     "deploy-ocr-sweeper": "npx hardhat deploy --tags OffchainAggregatorSweeper",
     "deploy-oracle-sweeper": "npx hardhat deploy --tags OracleSweeper",
@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/linkpoolio/chainlink-keep3r-sweeper.git"
+    "url": "git+https://github.com/linkpoolio/chainlink-keeper-sweeper.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/linkpoolio/chainlink-keep3r-sweeper/issues"
+    "url": "https://github.com/linkpoolio/chainlink-keeper-sweeper/issues"
   },
-  "homepage": "https://github.com/linkpoolio/chainlink-keep3r-sweeper#readme",
+  "homepage": "https://github.com/linkpoolio/chainlink-keeper-sweeper#readme",
   "devDependencies": {
     "@typechain/ethers-v5": "^1.0.0",
     "@types/bn.js": "^4.11.6",

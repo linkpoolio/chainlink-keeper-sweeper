@@ -10,10 +10,10 @@ import "./interfaces/IERC677.sol";
 import "./interfaces/ISweeper.sol";
 
 /**
- * @title Keep3rSweeper
+ * @title KeeperSweeper
  * @dev Handles withdrawing of node rewards from Chainlink contracts.
  */
-contract Keep3rSweeper is Ownable {
+contract KeeperSweeper is Ownable {
     using SafeMath for uint256;
     using SafeERC20 for IERC677;
 

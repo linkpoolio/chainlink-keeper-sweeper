@@ -9,15 +9,15 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   const { minToWithdraw } = config.OracleSweeper
 
-  const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
+  const keeperSweeper = await ethers.getContract('KeeperSweeper')
 
   const sweeper = await deploy('OracleSweeper', {
     from: deployer,
     log: true,
-    args: [keep3rSweeper.address, ethers.utils.parseEther(minToWithdraw.toString())],
+    args: [keeperSweeper.address, ethers.utils.parseEther(minToWithdraw.toString())],
   })
 
-  const tx = await keep3rSweeper.addSweeper(sweeper.address)
+  const tx = await keeperSweeper.addSweeper(sweeper.address)
   await tx.wait()
 }
 

@@ -11,20 +11,20 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { minToWithdraw, transmitter } = config.OffchainAggregatorSweeper
 
   const linkToken = await ethers.getContract('LinkToken')
-  const keep3rSweeper = await ethers.getContract('Keep3rSweeper')
+  const keeperSweeper = await ethers.getContract('KeeperSweeper')
 
   const sweeper = await deploy('OffchainAggregatorSweeper', {
     from: deployer,
     log: true,
     args: [
-      keep3rSweeper.address,
+      keeperSweeper.address,
       ethers.utils.parseEther(minToWithdraw.toString()),
       transmitter,
       linkToken.address,
     ],
   })
 
-  const tx = await keep3rSweeper.addSweeper(sweeper.address)
+  const tx = await keeperSweeper.addSweeper(sweeper.address)
   await tx.wait()
 }
 

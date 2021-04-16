@@ -1,4 +1,4 @@
-# Chainlink Keep3r Sweeper
+# Chainlink Keeper Sweeper
 
 This repository contains contracts and scripts that automate the process of withdrawing rewards from Chainlink contracts.
 
@@ -20,12 +20,12 @@ Before you can get started you will have to set some things up:
 
 ## Deployment
 
-This repo contains 4 contracts that you can deploy depending on your needs. The first contract, `Keep3rSweeper` is the main controller which must be deployed while the others are optional contracts that can be deployed depending on the type of Chainlink contract you want to withdraw from. The constructor arguments for all contracts are located in `config/deploy.ts`. The fields are already filled with recommended values but the addresses should be modified for your own Chainlink node.
+This repo contains 4 contracts that you can deploy depending on your needs. The first contract, `KeeperSweeper` is the main controller which must be deployed while the others are optional contracts that can be deployed depending on the type of Chainlink contract you want to withdraw from. The constructor arguments for all contracts are located in `config/deploy.ts`. The fields are already filled with recommended values but the addresses should be modified for your own Chainlink node.
 
 The main controller can be deployed with:
 
 ```
-yarn deploy-keep3r-sweeper
+yarn deploy-keeper-sweeper
 ```
 
 ### Oracle
@@ -116,7 +116,7 @@ This will transfer and accept payeeship for all contracts added to `OffchainAggr
 
 ## Withdrawing Rewards
 
-The controller contract implements the Chainlink Keep3r interface which is the recommended way to automate withdrawals but rewards can also be withdrawn manually using:
+The controller contract implements the Chainlink Keeper interface which is the recommended way to automate withdrawals but rewards can also be withdrawn manually using:
 
 ```
 yarn sweep

@@ -1,5 +1,5 @@
 export const config = {
-  Keep3rSweeper: {
+  KeeperSweeper: {
     rewardsWallet: '0x027ea05c0110126327E8EA5c14D39661b29141ac',
     minRewardsForPayment: 100,
     batchSize: 30,
