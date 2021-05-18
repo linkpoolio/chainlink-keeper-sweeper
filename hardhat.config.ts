@@ -31,6 +31,10 @@ const config: HardhatUserConfig = {
       url: '',
       accounts,
     },
+    binance: {
+      url: '',
+      accounts,
+    },
     hardhat: {
       chainId: 7777,
       accounts: accounts.map((acct) => ({ privateKey: acct, balance })),
