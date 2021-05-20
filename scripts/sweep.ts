@@ -13,7 +13,8 @@ async function main() {
 
   while (checkUpkeep[0]) {
     let toWithdraw = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
-    let tx = await keeperSweeper.withdraw(toWithdraw)
+    let gas = (await keeperSweeper.estimateGas.withdraw(toWithdraw)).toNumber()
+    let tx = await keeperSweeper.withdraw(toWithdraw, { gasLimit: gas + 100000 })
     await tx.wait()
     checkUpkeep = await keeperSweeper.checkUpkeep('0x00')
   }
