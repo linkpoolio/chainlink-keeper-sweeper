@@ -8,6 +8,7 @@
     "start": "npx hardhat node --network hardhat",
     "compile": "npx hardhat compile",
     "test-setup": "npx ts-node --files scripts/test-setup.ts",
+    "deposit-tokens": "npx ts-node --files scripts/deposit-tokens.ts",
     "estimate-gas": "npx hardhat run --network hardhat scripts/estimate-gas.ts",
     "deploy-keeper-sweeper": "npx hardhat deploy --tags KeeperSweeper",
     "deploy-flux-sweeper": "npx hardhat deploy --tags FluxAggregatorSweeper",
