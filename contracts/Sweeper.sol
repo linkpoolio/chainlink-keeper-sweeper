@@ -11,15 +11,15 @@ abstract contract Sweeper is Ownable {
     uint256 public minToWithdraw;
 
     address[] public contracts;
-    address nodeRewards;
+    address keeperSweeper;
 
-    modifier onlyNodeRewards() {
-        require(nodeRewards == msg.sender, "NodeRewards only");
+    modifier onlyKeeperSweeper() {
+        require(keeperSweeper == msg.sender, "KeeperSweeper only");
         _;
     }
 
-    constructor(address _nodeRewards, uint256 _minToWithdraw) {
-        nodeRewards = _nodeRewards;
+    constructor(address _keeperSweeper, uint256 _minToWithdraw) {
+        keeperSweeper = _keeperSweeper;
         minToWithdraw = _minToWithdraw;
     }
 
@@ -35,7 +35,7 @@ abstract contract Sweeper is Ownable {
      * @dev withdraws rewards from contracts
      * @param _contractIdxs indexes corresponding to the contracts
      **/
-    function withdraw(uint256[] calldata _contractIdxs) external virtual onlyNodeRewards() {
+    function withdraw(uint256[] calldata _contractIdxs) external virtual onlyKeeperSweeper() {
         require(_contractIdxs.length <= contracts.length, "contractIdxs length must be <= contracts length");
         _withdraw(_contractIdxs);
     }
@@ -92,6 +92,14 @@ abstract contract Sweeper is Ownable {
 
         contracts[_index] = contracts[contracts.length - 1];
         delete contracts[contracts.length - 1];
+    }
+
+    /**
+     * @dev sets keeperSweeper address
+     * @param _keeperSweeper address to set
+     **/
+    function setKeeperSweeper(address _keeperSweeper) external onlyOwner() {
+        keeperSweeper = _keeperSweeper;
     }
 
     /**

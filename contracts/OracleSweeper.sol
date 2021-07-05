@@ -9,7 +9,7 @@ import "./Sweeper.sol";
  * @dev Handles withdrawing of rewards from oracle Chainlink contracts.
  */
 contract OracleSweeper is Sweeper {
-    constructor(address _nodeRewards, uint256 _minToWithdraw) Sweeper(_nodeRewards, _minToWithdraw) {}
+    constructor(address _keeperSweeper, uint256 _minToWithdraw) Sweeper(_keeperSweeper, _minToWithdraw) {}
 
     /**
      * @dev returns the withdrawable amount for each oracle

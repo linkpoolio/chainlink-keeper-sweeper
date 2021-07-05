@@ -12,10 +12,10 @@ contract FluxAggregatorSweeper is Sweeper {
     address public oracle;
 
     constructor(
-        address _nodeRewards,
+        address _keeperSweeper,
         uint256 _minTowithdraw,
         address _oracle
-    ) Sweeper(_nodeRewards, _minTowithdraw) {
+    ) Sweeper(_keeperSweeper, _minTowithdraw) {
         oracle = _oracle;
     }
 
