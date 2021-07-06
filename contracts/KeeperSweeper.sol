@@ -61,6 +61,10 @@ contract KeeperSweeper is Ownable {
                 }
             }
 
+            if (canWithdrawCount > 0) {
+                totalRewards = totalRewards.add(rewardsToken.balanceOf(address(sweeper)));
+            }
+
             performData[i] = new uint256[](canWithdrawCount);
 
             uint256 addedCount;
