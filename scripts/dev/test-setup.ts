@@ -1,5 +1,5 @@
 import { ethers } from 'hardhat'
-import { config } from '../config/deploy'
+import { config } from '../../config/deploy'
 
 async function main() {
   console.log('**** Setting up test environment ****\n')

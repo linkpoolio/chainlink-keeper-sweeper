@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.7.4;
+pragma solidity 0.8.6;
 
 import "./interfaces/IERC677.sol";
 import "./interfaces/IOffchainAggregator.sol";
@@ -14,11 +14,11 @@ contract OffchainAggregatorSweeper is Sweeper {
     address public transmitter;
 
     constructor(
-        address _nodeRewards,
+        address _keeperSweeper,
         uint256 _minToWithdraw,
         address _transmitter,
         address _token
-    ) Sweeper(_nodeRewards, _minToWithdraw) {
+    ) Sweeper(_keeperSweeper, _minToWithdraw) {
         transmitter = _transmitter;
         token = IERC677(_token);
     }
@@ -48,7 +48,7 @@ contract OffchainAggregatorSweeper is Sweeper {
             }
         }
         if (token.balanceOf(address(this)) > 0) {
-            token.transfer(nodeRewards, token.balanceOf(address(this)));
+            token.transfer(keeperSweeper, token.balanceOf(address(this)));
         }
     }
 

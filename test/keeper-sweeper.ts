@@ -277,14 +277,29 @@ describe('KeeperSweeper', () => {
 
   it('checkUpkeep should return correct upkeepNeeded and performData', async () => {
     await token.transfer(fluxAggregator.address, toEther('100'))
+    await token.transfer(offchainAggregator.address, toEther('100'))
 
     let checkUpkeep = await keeperSweeper.checkUpkeep('0x00')
     let performData = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
 
     assert.equal(checkUpkeep[0], false, 'upkeepNeeded should be false')
     assert.equal(performData[0].length, '0', 'length should be 0')
-    assert.equal(performData[1].length, '1', 'length should be 0')
-    assert.equal(performData[2].length, '0', 'length should be 0')
+    assert.equal(performData[1].length, '1', 'length should be 1')
+    assert.equal(performData[2].length, '1', 'length should be 1')
+  })
+
+  it('checkUpkeep should account for sweeper reward balances', async () => {
+    await token.transfer(offchainAggregatorSweeper.address, toEther('800'))
+
+    let checkUpkeep = await keeperSweeper.checkUpkeep('0x00')
+    let performData = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
+
+    assert.equal(checkUpkeep[0], true, 'upkeepNeeded should be true')
+    assert.equal(performData[0].length, '0', 'length should be 0')
+    assert.equal(performData[1].length, '1', 'length should be 1')
+    assert.equal(performData[2].length, '1', 'length should be 1')
+
+    await keeperSweeper.connect(accounts[1]).performUpkeep(checkUpkeep[1])
   })
 
   it('withdrawing node rewards < minRewardsForPayment as a keeper should revert', async () => {
@@ -335,8 +350,8 @@ describe('KeeperSweeper', () => {
 
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsWallet)),
-      '5520.0',
-      'Rewards wallet should contain 5520'
+      '6420.0',
+      'Rewards wallet should contain 6420'
     )
   })
 

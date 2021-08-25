@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.7.4;
+pragma solidity 0.8.6;
 pragma experimental ABIEncoderV2;
 
-import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "./interfaces/IERC677.sol";
@@ -14,7 +13,6 @@ import "./interfaces/ISweeper.sol";
  * @dev Handles withdrawing of node rewards from Chainlink contracts.
  */
 contract KeeperSweeper is Ownable {
-    using SafeMath for uint256;
     using SafeERC20 for IERC677;
 
     address[] public sweepers;
@@ -61,12 +59,16 @@ contract KeeperSweeper is Ownable {
                 }
             }
 
+            if (canWithdrawCount > 0) {
+                totalRewards += rewardsToken.balanceOf(address(sweeper));
+            }
+
             performData[i] = new uint256[](canWithdrawCount);
 
             uint256 addedCount;
             for (uint j = 0; j < canWithdraw.length && addedCount < canWithdrawCount; j++) {
                 if (canWithdraw[j] >= minToWithdraw) {
-                    totalRewards = totalRewards.add(canWithdraw[j]);
+                    totalRewards += canWithdraw[j];
                     performData[i][addedCount++] = j;
                 }
             }

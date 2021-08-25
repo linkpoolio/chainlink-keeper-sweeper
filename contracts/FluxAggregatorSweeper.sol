@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.7.4;
+pragma solidity 0.8.6;
 
 import "./interfaces/IFluxAggregator.sol";
 import "./Sweeper.sol";
@@ -12,10 +12,10 @@ contract FluxAggregatorSweeper is Sweeper {
     address public oracle;
 
     constructor(
-        address _nodeRewards,
+        address _keeperSweeper,
         uint256 _minTowithdraw,
         address _oracle
-    ) Sweeper(_nodeRewards, _minTowithdraw) {
+    ) Sweeper(_keeperSweeper, _minTowithdraw) {
         oracle = _oracle;
     }
 
