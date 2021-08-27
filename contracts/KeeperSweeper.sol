@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.7;
-pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -50,7 +49,7 @@ contract KeeperSweeper is Ownable {
     }
 
     /**
-     * @dev returns summed withdrawable amount in next batch
+     * @dev returns summed withdrawable amount in next upkeep batch
      * @return withdrawable amount
      **/
     function batchWithdrawable() external view returns (uint) {
