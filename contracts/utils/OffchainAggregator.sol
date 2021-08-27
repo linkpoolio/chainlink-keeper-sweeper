@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -26,7 +26,7 @@ contract OffchainAggregator {
         token.transfer(payees[_transmitter], owedPayment(_transmitter));
     }
 
-    function owedPayment(address _transmitter) public view returns (uint256) {
+    function owedPayment(address _transmitter) public view returns (uint) {
         return token.balanceOf(address(this));
     }
 

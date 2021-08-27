@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 interface IOffchainAggregator {
-    function owedPayment(address _transmitter) external view returns (uint256);
+    function owedPayment(address _transmitter) external view returns (uint);
 
     function withdrawPayment(address _transmitter) external;
 

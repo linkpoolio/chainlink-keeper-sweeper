@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
@@ -10,14 +10,14 @@ contract LinkToken is IERC677, ERC20 {
     constructor(
         string memory tokenName,
         string memory tokenSymbol,
-        uint256 totalSupply
+        uint totalSupply
     ) ERC20(tokenName, tokenSymbol) {
-        _mint(msg.sender, totalSupply * (10**uint256(decimals())));
+        _mint(msg.sender, totalSupply * (10**uint(decimals())));
     }
 
     function transferAndCall(
         address _to,
-        uint256 _value,
+        uint _value,
         bytes calldata _data
     ) public override returns (bool success) {
         super.transfer(_to, _value);
@@ -29,7 +29,7 @@ contract LinkToken is IERC677, ERC20 {
 
     function contractFallback(
         address _to,
-        uint256 _value,
+        uint _value,
         bytes calldata _data
     ) private {
         ERC677Receiver receiver = ERC677Receiver(_to);
@@ -37,7 +37,7 @@ contract LinkToken is IERC677, ERC20 {
     }
 
     function isContract(address _addr) private view returns (bool hasCode) {
-        uint256 length;
+        uint length;
         assembly {
             length := extcodesize(_addr)
         }

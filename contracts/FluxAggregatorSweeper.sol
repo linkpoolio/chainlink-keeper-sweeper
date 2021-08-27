@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "./interfaces/IFluxAggregator.sol";
 import "./Sweeper.sol";
@@ -13,7 +13,7 @@ contract FluxAggregatorSweeper is Sweeper {
 
     constructor(
         address _keeperSweeper,
-        uint256 _minTowithdraw,
+        uint _minTowithdraw,
         address _oracle
     ) Sweeper(_keeperSweeper, _minTowithdraw) {
         oracle = _oracle;
@@ -23,8 +23,8 @@ contract FluxAggregatorSweeper is Sweeper {
      * @dev returns withdrawable amount for each flux aggregator
      * @return withdrawable balance of each flux aggregator
      **/
-    function withdrawable() external view override returns (uint256[] memory) {
-        uint256[] memory _withdrawable = new uint256[](contracts.length);
+    function withdrawable() external view override returns (uint[] memory) {
+        uint[] memory _withdrawable = new uint[](contracts.length);
         for (uint i = 0; i < contracts.length; i++) {
             _withdrawable[i] = IFluxAggregator(contracts[i]).withdrawablePayment(oracle);
         }
@@ -35,11 +35,11 @@ contract FluxAggregatorSweeper is Sweeper {
      * @dev withdraw rewards from flux aggregators
      * @param _contractIdxs indexes corresponding to the flux aggregators
      **/
-    function _withdraw(uint256[] calldata _contractIdxs) internal override {
+    function _withdraw(uint[] calldata _contractIdxs) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IFluxAggregator aggregator = IFluxAggregator(contracts[_contractIdxs[i]]);
-            uint256 amount = aggregator.withdrawablePayment(oracle);
+            uint amount = aggregator.withdrawablePayment(oracle);
             if (amount >= minToWithdraw) {
                 aggregator.withdrawPayment(oracle, msg.sender, amount);
             }
@@ -51,7 +51,7 @@ contract FluxAggregatorSweeper is Sweeper {
      * @param _contractIdxs indexes corresponsing to flux aggregators
      * @param _newAdmin address to transfer admin to
      **/
-    function _transferAdmin(uint256[] calldata _contractIdxs, address _newAdmin) internal override {
+    function _transferAdmin(uint[] calldata _contractIdxs, address _newAdmin) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IFluxAggregator(contracts[_contractIdxs[i]]).transferAdmin(oracle, _newAdmin);
@@ -62,7 +62,7 @@ contract FluxAggregatorSweeper is Sweeper {
      * @dev accepts admin for flux aggregators
      * @param _contractIdxs corresponding to the flux aggregators
      **/
-    function _acceptAdmin(uint256[] calldata _contractIdxs) internal override {
+    function _acceptAdmin(uint[] calldata _contractIdxs) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IFluxAggregator(contracts[_contractIdxs[i]]).acceptAdmin(oracle);
