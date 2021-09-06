@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "./interfaces/IERC677.sol";
 import "./interfaces/IOffchainAggregator.sol";
@@ -15,7 +15,7 @@ contract OffchainAggregatorSweeper is Sweeper {
 
     constructor(
         address _keeperSweeper,
-        uint256 _minToWithdraw,
+        uint _minToWithdraw,
         address _transmitter,
         address _token
     ) Sweeper(_keeperSweeper, _minToWithdraw) {
@@ -27,8 +27,8 @@ contract OffchainAggregatorSweeper is Sweeper {
      * @dev returns withdrawable amount for each offchain aggregator
      * @return withdrawable balance of each offchain aggregator
      **/
-    function withdrawable() external view override returns (uint256[] memory) {
-        uint256[] memory _withdrawable = new uint256[](contracts.length);
+    function withdrawable() external view override returns (uint[] memory) {
+        uint[] memory _withdrawable = new uint[](contracts.length);
         for (uint i = 0; i < contracts.length; i++) {
             _withdrawable[i] = IOffchainAggregator(contracts[i]).owedPayment(transmitter);
         }
@@ -36,10 +36,18 @@ contract OffchainAggregatorSweeper is Sweeper {
     }
 
     /**
+     * @dev returns the withdrawable balance in this contract
+     * @return withdrawable balance in this contract
+     **/
+    function withdrawableBalance() external view override returns (uint) {
+        return token.balanceOf(address(this));
+    }
+
+    /**
      * @dev withdraw rewards from offchain aggregators
      * @param _contractIdxs indexes corresponding to the offchain aggregators
      **/
-    function _withdraw(uint256[] calldata _contractIdxs) internal override {
+    function _withdraw(uint[] calldata _contractIdxs) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IOffchainAggregator aggregator = IOffchainAggregator(contracts[_contractIdxs[i]]);
@@ -57,7 +65,7 @@ contract OffchainAggregatorSweeper is Sweeper {
      * @param _contractIdxs indexes corresponsing to offchain aggregators
      * @param _newAdmin address to transfer admin to
      **/
-    function _transferAdmin(uint256[] calldata _contractIdxs, address _newAdmin) internal override {
+    function _transferAdmin(uint[] calldata _contractIdxs, address _newAdmin) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IOffchainAggregator(contracts[_contractIdxs[i]]).transferPayeeship(transmitter, _newAdmin);
@@ -68,7 +76,7 @@ contract OffchainAggregatorSweeper is Sweeper {
      * @dev accepts payeeship for offchain aggregators
      * @param _contractIdxs indexes corresponding to the offchain aggregators
      **/
-    function _acceptAdmin(uint256[] calldata _contractIdxs) internal override {
+    function _acceptAdmin(uint[] calldata _contractIdxs) internal override {
         for (uint i = 0; i < _contractIdxs.length; i++) {
             require(_contractIdxs[i] < contracts.length, "contractIdx must be < contracts length");
             IOffchainAggregator(contracts[_contractIdxs[i]]).acceptPayeeship(transmitter);

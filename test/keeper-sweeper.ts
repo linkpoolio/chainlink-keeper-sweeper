@@ -134,6 +134,13 @@ describe('KeeperSweeper', () => {
       'Withdrawable amount should be 1'
     )
 
+    let batchWithdrawable = await keeperSweeper.batchWithdrawable()
+    assert.equal(
+      ethers.utils.formatEther(batchWithdrawable),
+      '0.0',
+      'Withdrawable amount should be 0'
+    )
+
     await assertThrowsAsync(async () => {
       await keeperSweeper.withdraw(sweeperIdxs)
     }, 'revert')
@@ -159,6 +166,7 @@ describe('KeeperSweeper', () => {
     await token.transfer(oracle2.address, toEther('500'))
     await token.transfer(fluxAggregator2.address, toEther('500'))
     await token.transfer(offchainAggregator2.address, toEther('500'))
+    await token.transfer(offchainAggregatorSweeper.address, toEther('500'))
 
     let withdrawable = await keeperSweeper.withdrawable()
     assert.equal(
@@ -191,6 +199,11 @@ describe('KeeperSweeper', () => {
       '510.0',
       'Offchain aggregator 2 rewards should be 510'
     )
+    assert.equal(
+      ethers.utils.formatEther(await keeperSweeper.batchWithdrawable()),
+      '3560.0',
+      'Withdrawable should be 3560'
+    )
 
     await keeperSweeper.connect(accounts[4]).withdraw(sweeperIdxs)
     withdrawable = await keeperSweeper.withdrawable()
@@ -221,13 +234,18 @@ describe('KeeperSweeper', () => {
       '0.0',
       'Offchain aggregator 2 rewards should be 0'
     )
+    assert.equal(
+      ethers.utils.formatEther(await keeperSweeper.batchWithdrawable()),
+      '0.0',
+      'Withdrawable should be 0'
+    )
   })
 
   it('rewards wallet should show new rewards', async () => {
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsWallet)),
-      '3060.0',
-      'Rewards wallet should contain 3060'
+      '3560.0',
+      'Rewards wallet should contain 3560'
     )
   })
 
@@ -270,8 +288,8 @@ describe('KeeperSweeper', () => {
   it('rewards wallet should show new rewards', async () => {
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsWallet)),
-      '5060.0',
-      'Rewards wallet should contain 5060'
+      '5560.0',
+      'Rewards wallet should contain 5560'
     )
   })
 
@@ -290,13 +308,17 @@ describe('KeeperSweeper', () => {
 
   it('checkUpkeep should account for sweeper reward balances', async () => {
     await token.transfer(offchainAggregatorSweeper.address, toEther('800'))
+    await keeperSweeper
+      .connect(accounts[1])
+      .performUpkeep((await keeperSweeper.checkUpkeep('0x00'))[1])
+    await token.transfer(offchainAggregatorSweeper.address, toEther('1000'))
 
     let checkUpkeep = await keeperSweeper.checkUpkeep('0x00')
     let performData = ethers.utils.defaultAbiCoder.decode(['uint256[][]'], checkUpkeep[1])[0]
 
     assert.equal(checkUpkeep[0], true, 'upkeepNeeded should be true')
     assert.equal(performData[0].length, '0', 'length should be 0')
-    assert.equal(performData[1].length, '1', 'length should be 1')
+    assert.equal(performData[1].length, '0', 'length should be 0')
     assert.equal(performData[2].length, '1', 'length should be 1')
 
     await keeperSweeper.connect(accounts[1]).performUpkeep(checkUpkeep[1])
@@ -350,8 +372,8 @@ describe('KeeperSweeper', () => {
 
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsWallet)),
-      '6420.0',
-      'Rewards wallet should contain 6420'
+      '7920.0',
+      'Rewards wallet should contain 7920'
     )
   })
 

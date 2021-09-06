@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
@@ -21,14 +21,14 @@ contract FluxAggregator {
         }
     }
 
-    function withdrawablePayment(address _oracle) external view returns (uint256) {
+    function withdrawablePayment(address _oracle) external view returns (uint) {
         return token.balanceOf(address(this));
     }
 
     function withdrawPayment(
         address _oracle,
         address _recipient,
-        uint256 _amount
+        uint _amount
     ) external {
         require(msg.sender == admins[_oracle], "Must be oracle admin");
         require(token.balanceOf(address(this)) >= _amount, "Insufficient balance");

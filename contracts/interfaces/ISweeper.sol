@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 interface ISweeper {
-    function withdraw(uint256[] calldata oracleIdxs) external;
+    function withdraw(uint[] calldata oracleIdxs) external;
 
-    function withdrawable() external view returns (uint256[] memory);
+    function withdrawable() external view returns (uint[] memory);
 
-    function minToWithdraw() external view returns (uint256);
+    function withdrawableBalance() external view returns (uint);
+
+    function minToWithdraw() external view returns (uint);
 }

@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
-pragma experimental ABIEncoderV2;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -20,16 +19,16 @@ contract KeeperSweeper is Ownable {
     address public rewardsWallet;
     IERC677 public rewardsToken;
 
-    uint256 public minRewardsForPayment;
-    uint256 public batchSize;
+    uint public minRewardsForPayment;
+    uint public batchSize;
 
-    event Withdraw(address indexed sender, uint256 amount);
+    event Withdraw(address indexed sender, uint amount);
 
     constructor(
         address _rewardsToken,
         address _rewardsWallet,
-        uint256 _minRewardsForPayment,
-        uint256 _batchSize
+        uint _minRewardsForPayment,
+        uint _batchSize
     ) {
         rewardsToken = IERC677(_rewardsToken);
         rewardsWallet = _rewardsWallet;
@@ -38,20 +37,62 @@ contract KeeperSweeper is Ownable {
     }
 
     /**
+     * @dev returns withdrawable amount from all contracts
+     * @return total withdrawable balance
+     **/
+    function withdrawable() external view returns (uint[][] memory) {
+        uint[][] memory _withdrawable = new uint[][](sweepers.length);
+        for (uint i = 0; i < sweepers.length; i++) {
+            _withdrawable[i] = ISweeper(sweepers[i]).withdrawable();
+        }
+        return _withdrawable;
+    }
+
+    /**
+     * @dev returns summed withdrawable amount in next upkeep batch
+     * @return withdrawable amount
+     **/
+    function batchWithdrawable() external view returns (uint) {
+        uint totalRewards;
+        uint batch = 0;
+
+        for (uint i = 0; i < sweepers.length && batch < batchSize; i++) {
+            ISweeper sweeper = ISweeper(sweepers[i]);
+            uint withdrawableBalance = sweeper.withdrawableBalance();
+            uint minToWithdraw = sweeper.minToWithdraw();
+            uint[] memory canWithdraw = sweeper.withdrawable();
+
+            for (uint j = 0; j < canWithdraw.length && batch < batchSize; j++) {
+                if (canWithdraw[j] >= minToWithdraw) {
+                    totalRewards += canWithdraw[j];
+                    batch++;
+                }
+            }
+
+            if (withdrawableBalance > minToWithdraw) {
+                totalRewards += withdrawableBalance;
+            }
+        }
+
+        return totalRewards;
+    }
+
+    /**
      * @dev returns whether or not rewards should be withdrawn and the indexes to withdraw from
      * @return whether to perform upkeep and calldata to use
      **/
     function checkUpkeep(bytes calldata _checkData) external view returns (bool, bytes memory) {
-        uint256[][] memory performData = new uint256[][](sweepers.length);
-        uint256 totalRewards;
-        uint256 batch = 0;
+        uint[][] memory performData = new uint[][](sweepers.length);
+        uint totalRewards;
+        uint batch = 0;
 
         for (uint i = 0; i < sweepers.length && batch < batchSize; i++) {
             ISweeper sweeper = ISweeper(sweepers[i]);
-            uint256 minToWithdraw = sweeper.minToWithdraw();
-            uint256[] memory canWithdraw = sweeper.withdrawable();
+            uint withdrawableBalance = sweeper.withdrawableBalance();
+            uint minToWithdraw = sweeper.minToWithdraw();
+            uint[] memory canWithdraw = sweeper.withdrawable();
 
-            uint256 canWithdrawCount;
+            uint canWithdrawCount;
             for (uint j = 0; j < canWithdraw.length && batch < batchSize; j++) {
                 if (canWithdraw[j] >= minToWithdraw) {
                     canWithdrawCount++;
@@ -59,18 +100,23 @@ contract KeeperSweeper is Ownable {
                 }
             }
 
-            if (canWithdrawCount > 0) {
-                totalRewards += rewardsToken.balanceOf(address(sweeper));
+            if (canWithdrawCount == 0 && withdrawableBalance >= minToWithdraw) {
+                performData[i] = new uint[](1);
+                performData[i][0] = 0;
+            } else {
+                performData[i] = new uint[](canWithdrawCount);
+
+                uint addedCount;
+                for (uint j = 0; j < canWithdraw.length && addedCount < canWithdrawCount; j++) {
+                    if (canWithdraw[j] >= minToWithdraw) {
+                        totalRewards += canWithdraw[j];
+                        performData[i][addedCount++] = j;
+                    }
+                }
             }
 
-            performData[i] = new uint256[](canWithdrawCount);
-
-            uint256 addedCount;
-            for (uint j = 0; j < canWithdraw.length && addedCount < canWithdrawCount; j++) {
-                if (canWithdraw[j] >= minToWithdraw) {
-                    totalRewards += canWithdraw[j];
-                    performData[i][addedCount++] = j;
-                }
+            if (withdrawableBalance >= minToWithdraw) {
+                totalRewards += withdrawableBalance;
             }
         }
 
@@ -84,7 +130,7 @@ contract KeeperSweeper is Ownable {
     function performUpkeep(bytes calldata _performData) external {
         _withdraw(_performData);
 
-        uint256 rewards = rewardsToken.balanceOf(address(this));
+        uint rewards = rewardsToken.balanceOf(address(this));
         require(rewards >= minRewardsForPayment, "Rewards must be >= minRewardsForPayment");
 
         rewardsToken.transferAndCall(rewardsWallet, rewards, "0x00");
@@ -95,26 +141,14 @@ contract KeeperSweeper is Ownable {
      * @dev withdraw rewards for selected contracts
      * @param _sweeperIdxs indexes of the contracts
      **/
-    function withdraw(uint256[][] calldata _sweeperIdxs) external {
+    function withdraw(uint[][] calldata _sweeperIdxs) external {
         _withdraw(abi.encode(_sweeperIdxs));
 
-        uint256 rewards = rewardsToken.balanceOf(address(this));
+        uint rewards = rewardsToken.balanceOf(address(this));
         require(rewards > 0, "Rewards must be > 0");
 
         rewardsToken.transferAndCall(rewardsWallet, rewards, "0x00");
         emit Withdraw(msg.sender, rewards);
-    }
-
-    /**
-     * @dev withdrawable amount from oracles
-     * @return total withdrawable balance
-     **/
-    function withdrawable() external view returns (uint256[][] memory) {
-        uint256[][] memory _withdrawable = new uint256[][](sweepers.length);
-        for (uint i = 0; i < sweepers.length; i++) {
-            _withdrawable[i] = ISweeper(sweepers[i]).withdrawable();
-        }
-        return _withdrawable;
     }
 
     /**
@@ -129,7 +163,7 @@ contract KeeperSweeper is Ownable {
      * @dev removes sweeper address
      * @param _index index of sweeper to remove
      **/
-    function removeSweeper(uint256 _index) external onlyOwner() {
+    function removeSweeper(uint _index) external onlyOwner() {
         require(_index < sweepers.length, "Sweeper does not exist");
         sweepers[_index] = sweepers[sweepers.length - 1];
         delete sweepers[sweepers.length - 1];
@@ -139,7 +173,7 @@ contract KeeperSweeper is Ownable {
      * @dev sets minimum amount of rewards needed to receive payment on withdraw
      * @param _minRewardsForPayment amount to set
      **/
-    function setMinRewardsForPayment(uint256 _minRewardsForPayment) external onlyOwner() {
+    function setMinRewardsForPayment(uint _minRewardsForPayment) external onlyOwner() {
         minRewardsForPayment = _minRewardsForPayment;
     }
 
@@ -147,7 +181,7 @@ contract KeeperSweeper is Ownable {
      * @dev sets maximum batch size for withdrawals
      * @param _batchSize amount to set
      **/
-    function setBatchSize(uint256 _batchSize) external onlyOwner() {
+    function setBatchSize(uint _batchSize) external onlyOwner() {
         batchSize = _batchSize;
     }
 
@@ -156,7 +190,7 @@ contract KeeperSweeper is Ownable {
      * @param _sweeperIdxs indexes of the contracts
      **/
     function _withdraw(bytes memory _sweeperIdxs) private {
-        uint256[][] memory sweeperIdxs = abi.decode(_sweeperIdxs, (uint256[][]));
+        uint[][] memory sweeperIdxs = abi.decode(_sweeperIdxs, (uint[][]));
         require(sweeperIdxs.length <= sweepers.length, "SweeperIdxs must be <= sweepers length");
 
         for (uint i = 0; i < sweeperIdxs.length; i++) {

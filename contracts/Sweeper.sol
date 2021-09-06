@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.6;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
  * @dev Base sweeper contract that other sweeper contracts should inherit from
  */
 abstract contract Sweeper is Ownable {
-    uint256 public minToWithdraw;
+    uint public minToWithdraw;
 
     address[] public contracts;
     address keeperSweeper;
@@ -18,7 +18,7 @@ abstract contract Sweeper is Ownable {
         _;
     }
 
-    constructor(address _keeperSweeper, uint256 _minToWithdraw) {
+    constructor(address _keeperSweeper, uint _minToWithdraw) {
         keeperSweeper = _keeperSweeper;
         minToWithdraw = _minToWithdraw;
     }
@@ -35,7 +35,7 @@ abstract contract Sweeper is Ownable {
      * @dev withdraws rewards from contracts
      * @param _contractIdxs indexes corresponding to the contracts
      **/
-    function withdraw(uint256[] calldata _contractIdxs) external virtual onlyKeeperSweeper() {
+    function withdraw(uint[] calldata _contractIdxs) external virtual onlyKeeperSweeper() {
         require(_contractIdxs.length <= contracts.length, "contractIdxs length must be <= contracts length");
         _withdraw(_contractIdxs);
     }
@@ -44,14 +44,22 @@ abstract contract Sweeper is Ownable {
      * @dev returns the withdrawable amount for each contract
      * @return withdrawable balance of each contract
      **/
-    function withdrawable() external view virtual returns (uint256[] memory);
+    function withdrawable() external view virtual returns (uint[] memory);
+
+    /**
+     * @dev returns the withdrawable balance in this contract
+     * @return withdrawable balance in this contract
+     **/
+    function withdrawableBalance() external view virtual returns (uint) {
+        return 0;
+    }
 
     /**
      * @dev transfers admin to new address for selected contracts
      * @param _contractIdxs indexes corresponsing to contracts
      * @param _newAdmin address to transfer admin to
      **/
-    function transferAdmin(uint256[] calldata _contractIdxs, address _newAdmin) external onlyOwner() {
+    function transferAdmin(uint[] calldata _contractIdxs, address _newAdmin) external onlyOwner() {
         require(_contractIdxs.length <= contracts.length, "contractIdxs length must be <= contracts length");
         _transferAdmin(_contractIdxs, _newAdmin);
     }
@@ -60,7 +68,7 @@ abstract contract Sweeper is Ownable {
      * @dev accepts admin transfer for selected contracts
      * @param _contractIdxs indexes corresponsing to contracts
      **/
-    function acceptAdmin(uint256[] calldata _contractIdxs) external onlyOwner() {
+    function acceptAdmin(uint[] calldata _contractIdxs) external onlyOwner() {
         require(_contractIdxs.length <= contracts.length, "contractIdxs length must be <= contracts length");
         _acceptAdmin(_contractIdxs);
     }
@@ -69,7 +77,7 @@ abstract contract Sweeper is Ownable {
      * @dev sets the minimum amount needed to withdraw for each contract
      * @param _minToWithdraw amount to set
      **/
-    function setMinToWithdraw(uint256 _minToWithdraw) external onlyOwner() {
+    function setMinToWithdraw(uint _minToWithdraw) external onlyOwner() {
         minToWithdraw = _minToWithdraw;
     }
 
@@ -87,7 +95,7 @@ abstract contract Sweeper is Ownable {
      * @dev removes contract address
      * @param _index index of contract to remove
      **/
-    function removeContract(uint256 _index) external onlyOwner() {
+    function removeContract(uint _index) external onlyOwner() {
         require(_index < contracts.length, "Contract does not exist");
 
         contracts[_index] = contracts[contracts.length - 1];
@@ -106,18 +114,18 @@ abstract contract Sweeper is Ownable {
      * @dev withdraws rewards from contracts
      * @param _contractIdxs indexes corresponding to the contracts
      **/
-    function _withdraw(uint256[] calldata _contractIdxs) internal virtual;
+    function _withdraw(uint[] calldata _contractIdxs) internal virtual;
 
     /**
      * @dev transfers admin to new address for selected contracts
      * @param _contractIdxs indexes corresponsing to contracts
      * @param _newAdmin address to transfer admin to
      **/
-    function _transferAdmin(uint256[] calldata _contractIdxs, address _newAdmin) internal virtual;
+    function _transferAdmin(uint[] calldata _contractIdxs, address _newAdmin) internal virtual;
 
     /**
      * @dev accepts admin transfer for selected contracts
      * @param _contractIdxs indexes corresponsing to contracts
      **/
-    function _acceptAdmin(uint256[] calldata _contractIdxs) internal virtual {}
+    function _acceptAdmin(uint[] calldata _contractIdxs) internal virtual {}
 }
