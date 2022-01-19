@@ -1,7 +1,6 @@
 import { ethers } from 'hardhat'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { DeployFunction } from 'hardhat-deploy/types'
-import { config } from '../config/deploy'
+import { config } from '../config/v1/deploy'
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre
@@ -28,4 +27,4 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   await tx.wait()
 }
 
-module.exports.tags = ['OffchainAggregatorSweeper']
+module.exports.tags = ['V1-OffchainAggregatorSweeper']

@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { config } from '../config/deploy'
+import { config } from '../config/v1/deploy'
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre
@@ -31,4 +31,4 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
   })
 }
 
-module.exports.tags = ['KeeperSweeper']
+module.exports.tags = ['V1-KeeperSweeper']

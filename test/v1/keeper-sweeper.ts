@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { Signer, Contract } from 'ethers'
-import { toEther, assertThrowsAsync } from './utils/helpers'
+import { toEther, assertThrowsAsync } from '../utils/helpers'
 const { assert } = require('chai')
 
 describe('KeeperSweeper', () => {
