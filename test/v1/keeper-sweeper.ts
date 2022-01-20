@@ -29,7 +29,7 @@ describe('KeeperSweeper', () => {
     account0 = await accounts[0].getAddress()
     rewardsWallet = await accounts[2].getAddress()
 
-    const Token = await ethers.getContractFactory('LinkToken')
+    const Token = await ethers.getContractFactory('contracts/v1/mock/LinkToken.sol:LinkToken')
     token = await Token.deploy('Chainlink', 'LINK', '1000000000')
 
     const KeeperSweeper = await ethers.getContractFactory('KeeperSweeper')

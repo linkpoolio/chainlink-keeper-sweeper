@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test --network hardhat",
     "start": "npx hardhat node --network hardhat",
-    "compile": "npx hardhat compile"
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test test/v2/* --network hardhat"
   },
   "repository": {
     "type": "git",

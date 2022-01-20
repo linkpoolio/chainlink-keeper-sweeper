@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.11;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
@@ -12,10 +11,6 @@ import "./interfaces/IERC677.sol";
  * @dev Handles distribution of revenue based on profit margins.
  */
 contract RevenueSplit is Ownable {
-    using SafeERC20 for IERC677;
-
-    address[] public contracts;
-
     IERC677 public rewardsToken;
     address public ownerWallet;
     address public rewardsPool;
