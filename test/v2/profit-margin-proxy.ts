@@ -3,9 +3,9 @@ import { Signer, Contract } from 'ethers'
 import { toEther, assertThrowsAsync } from '../utils/helpers'
 const { assert } = require('chai')
 
-describe('RevenueSplit', () => {
+describe('ProfitMarginProxy', () => {
   let token: Contract
-  let revenueSplit: Contract
+  let profitMarginProxy: Contract
   let accounts: Signer[]
   let account0: string
   let rewardsPool: string
@@ -23,8 +23,8 @@ describe('RevenueSplit', () => {
     const ProfitMarginFeed = await ethers.getContractFactory('ProfitMarginFeed')
     const profitMarginFeed = await ProfitMarginFeed.deploy(4000)
 
-    const RevenueSplit = await ethers.getContractFactory('RevenueSplit')
-    revenueSplit = await RevenueSplit.deploy(
+    const ProfitMarginProxy = await ethers.getContractFactory('ProfitMarginProxy')
+    profitMarginProxy = await ProfitMarginProxy.deploy(
       token.address,
       rewardsPool,
       ownerWallet,
@@ -35,17 +35,17 @@ describe('RevenueSplit', () => {
   })
 
   it('should be able to check available rewards', async () => {
-    await token.transfer(revenueSplit.address, toEther(100))
+    await token.transfer(profitMarginProxy.address, toEther(100))
 
     assert.equal(
-      ethers.utils.formatEther(await revenueSplit.availableRewards()),
+      ethers.utils.formatEther(await profitMarginProxy.availableRewards()),
       '100.0',
       'Available rewards should be 100'
     )
   })
 
   it('should be able to distribute rewards', async () => {
-    await revenueSplit.distributeRewards()
+    await profitMarginProxy.distributeRewards()
 
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsPool)),
@@ -61,20 +61,24 @@ describe('RevenueSplit', () => {
 
   it('should not be able to distribute rewards when availableRewards is 0', async () => {
     await assertThrowsAsync(async () => {
-      await revenueSplit.distributeRewards()
+      await profitMarginProxy.distributeRewards()
     }, 'revert')
   })
 
   it('checkUpkeep should return whether or not min distribution threshold is met', async () => {
-    await token.transfer(revenueSplit.address, toEther(99))
-    assert.equal((await revenueSplit.checkUpkeep('0x00'))[0], false, 'Threshold should not be met')
+    await token.transfer(profitMarginProxy.address, toEther(99))
+    assert.equal(
+      (await profitMarginProxy.checkUpkeep('0x00'))[0],
+      false,
+      'Threshold should not be met'
+    )
 
-    await token.transfer(revenueSplit.address, toEther(101))
-    assert.equal((await revenueSplit.checkUpkeep('0x00'))[0], true, 'Threshold should be met')
+    await token.transfer(profitMarginProxy.address, toEther(101))
+    assert.equal((await profitMarginProxy.checkUpkeep('0x00'))[0], true, 'Threshold should be met')
   })
 
   it('should be able to distribute rewards as a keeper', async () => {
-    await revenueSplit.performUpkeep('0x00')
+    await profitMarginProxy.performUpkeep('0x00')
 
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsPool)),
@@ -89,10 +93,10 @@ describe('RevenueSplit', () => {
   })
 
   it('should not be able to distribute rewards as a keeper if min threshold is not met', async () => {
-    await token.transfer(revenueSplit.address, toEther(99))
+    await token.transfer(profitMarginProxy.address, toEther(99))
 
     await assertThrowsAsync(async () => {
-      await revenueSplit.performUpkeep('0x00')
+      await profitMarginProxy.performUpkeep('0x00')
     }, 'revert')
   })
 
@@ -101,29 +105,29 @@ describe('RevenueSplit', () => {
     const a2 = '0x0000000000000000000000000000000000000002'
     const a3 = '0x0000000000000000000000000000000000000003'
 
-    await revenueSplit.setRewardsPool(a1)
-    await revenueSplit.setOwnerWallet(a2)
-    await revenueSplit.setProfitMarginFeed(a3)
-    await revenueSplit.setRewardsPoolProfitShare(500)
+    await profitMarginProxy.setRewardsPool(a1)
+    await profitMarginProxy.setOwnerWallet(a2)
+    await profitMarginProxy.setProfitMarginFeed(a3)
+    await profitMarginProxy.setRewardsPoolProfitShare(500)
 
-    assert.equal(await revenueSplit.rewardsPool(), a1, 'New adddress should be set')
-    assert.equal(await revenueSplit.ownerWallet(), a2, 'New adddress should be set')
-    assert.equal(await revenueSplit.profitMarginFeed(), a3, 'New adddress should be set')
-    assert.equal(await revenueSplit.rewardsPoolProfitShare(), 500, 'New value should be set')
+    assert.equal(await profitMarginProxy.rewardsPool(), a1, 'New adddress should be set')
+    assert.equal(await profitMarginProxy.ownerWallet(), a2, 'New adddress should be set')
+    assert.equal(await profitMarginProxy.profitMarginFeed(), a3, 'New adddress should be set')
+    assert.equal(await profitMarginProxy.rewardsPoolProfitShare(), 500, 'New value should be set')
   })
 
   it('only owner should be able to update config variables', async () => {
     await assertThrowsAsync(async () => {
-      await revenueSplit.connect(accounts[1]).setRewardsPool(account0)
+      await profitMarginProxy.connect(accounts[1]).setRewardsPool(account0)
     }, 'revert')
     await assertThrowsAsync(async () => {
-      await revenueSplit.connect(accounts[1]).setOwnerWallet(account0)
+      await profitMarginProxy.connect(accounts[1]).setOwnerWallet(account0)
     }, 'revert')
     await assertThrowsAsync(async () => {
-      await revenueSplit.connect(accounts[1]).setProfitMarginFeed(account0)
+      await profitMarginProxy.connect(accounts[1]).setProfitMarginFeed(account0)
     }, 'revert')
     await assertThrowsAsync(async () => {
-      await revenueSplit.connect(accounts[1]).setRewardsPoolProfitShare(100)
+      await profitMarginProxy.connect(accounts[1]).setRewardsPoolProfitShare(100)
     }, 'revert')
   })
 })

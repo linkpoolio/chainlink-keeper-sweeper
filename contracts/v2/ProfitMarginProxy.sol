@@ -7,10 +7,10 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./interfaces/IERC677.sol";
 
 /**
- * @title RevenueSplit
+ * @title ProfitMarginProxy
  * @dev Handles distribution of revenue based on profit margins.
  */
-contract RevenueSplit is Ownable {
+contract ProfitMarginProxy is Ownable {
     IERC677 public rewardsToken;
     address public ownerWallet;
     address public rewardsPool;

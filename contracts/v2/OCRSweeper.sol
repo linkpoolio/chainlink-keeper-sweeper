@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.11;
 
-import "./RevenueSplit.sol";
+import "./ProfitMarginProxy.sol";
 import "./interfaces/IOffchainAggregator.sol";
 
 /**
  * @title OCRSweeper
  * @dev Handles distribution of revenue for OCR feeds.
  */
-contract OCRSweeper is RevenueSplit {
+contract OCRSweeper is ProfitMarginProxy {
     address public transmitter;
 
     constructor(
@@ -20,7 +20,7 @@ contract OCRSweeper is RevenueSplit {
         uint _minRewardsForDistribution,
         address _transmitter
     )
-        RevenueSplit(
+        ProfitMarginProxy(
             _rewardsToken,
             _rewardsPool,
             _ownerWallet,
@@ -51,5 +51,13 @@ contract OCRSweeper is RevenueSplit {
         for (uint i = 0; i < _contracts.length; i++) {
             IOffchainAggregator(_contracts[i]).acceptPayeeship(transmitter);
         }
+    }
+
+    /**
+     * @dev sets a new transmitter address
+     * @param _transmitter address to set
+     **/
+    function setTransmitter(address _transmitter) external onlyOwner {
+        transmitter = _transmitter;
     }
 }
