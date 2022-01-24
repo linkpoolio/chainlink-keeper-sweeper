@@ -11,11 +11,11 @@ async function main() {
   console.log('**** Accepting feed payeeships ****\n')
 
   network = await ethers.provider.getNetwork()
-  const ocrSweeper = await ethers.getContract(`OCRSweeper`)
+  const ocaSweeper = await ethers.getContract(`OCASweeper`)
 
   for (let i = 0; i < feedTransfers.length; i += 40) {
     let gasPrice = await ethGas.get('')
-    let tx = await ocrSweeper.acceptPayeeship(feedTransfers.slice(i, i + 40), {
+    let tx = await ocaSweeper.acceptPayeeship(feedTransfers.slice(i, i + 40), {
       maxFeePerGas: convertToWei(gasPrice.data.fastest) + 10000000000,
     })
     await tx.wait()

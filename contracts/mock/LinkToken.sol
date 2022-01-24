@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity 0.8.7;
+pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import "./interfaces/IERC677Receiver.sol";
-import "../interfaces/IERC677.sol";
+import "./interfaces/IERC677.sol";
 
 contract LinkToken is IERC677, ERC20 {
     constructor(

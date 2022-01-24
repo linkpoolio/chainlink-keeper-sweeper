@@ -29,7 +29,7 @@ describe('KeeperSweeper', () => {
     account0 = await accounts[0].getAddress()
     rewardsWallet = await accounts[2].getAddress()
 
-    const Token = await ethers.getContractFactory('contracts/v1/mock/LinkToken.sol:LinkToken')
+    const Token = await ethers.getContractFactory('LinkToken')
     token = await Token.deploy('Chainlink', 'LINK', '1000000000')
 
     const KeeperSweeper = await ethers.getContractFactory('KeeperSweeper')
@@ -419,38 +419,6 @@ describe('KeeperSweeper', () => {
     await assertThrowsAsync(async () => {
       await offchainAggregatorSweeper.withdraw([0])
     }, 'revert')
-  })
-
-  it('should be able to transfer admin for all contract types', async () => {
-    await token.transfer(oracle.address, toEther('100'))
-    await token.transfer(fluxAggregator.address, toEther('100'))
-    await token.transfer(offchainAggregator.address, toEther('100'))
-    await token.transfer(oracle2.address, toEther('100'))
-    await token.transfer(fluxAggregator2.address, toEther('100'))
-    await token.transfer(offchainAggregator2.address, toEther('100'))
-
-    await oracleSweeper.transferAdmin([0, 1], account0)
-    await assertThrowsAsync(async () => {
-      await keeperSweeper.withdraw([[1], [], []])
-    }, 'revert')
-    await oracle.transferOwnership(oracleSweeper.address)
-    await keeperSweeper.withdraw([[0], [], []])
-
-    await fluxAggregatorSweeper.transferAdmin([0], account0)
-    await assertThrowsAsync(async () => {
-      await keeperSweeper.withdraw([[], [0], []])
-    }, 'revert')
-    await keeperSweeper.withdraw([[], [1], []])
-    await fluxAggregator.transferAdmin(oracle.address, fluxAggregatorSweeper.address)
-    await keeperSweeper.withdraw([[], [0], []])
-
-    await offchainAggregatorSweeper.transferAdmin([1], account0)
-    await assertThrowsAsync(async () => {
-      await keeperSweeper.withdraw([[], [], [1]])
-    }, 'revert')
-    await keeperSweeper.withdraw([[], [], [0]])
-    await offchainAggregator2.transferPayeeship(oracle.address, offchainAggregatorSweeper.address)
-    await keeperSweeper.withdraw([[], [], [1]])
   })
 
   it('only owner should be able to transfer admin', async () => {

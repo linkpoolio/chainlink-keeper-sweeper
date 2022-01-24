@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
-import { market } from '../api/market'
-import { ethGas } from '../api/ethGas'
+import { market } from '../../api/market'
+import { ethGas } from '../../api/ethGas'
 
 const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
 

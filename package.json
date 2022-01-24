@@ -8,7 +8,7 @@
     "compile": "npx hardhat compile",
     "test": "npx hardhat test test/v2/* --network hardhat",
     "estimate-gas": "npx hardhat run scripts/v2/estimate-gas.ts --network hardhat",
-    "deploy-ocr-sweeper": "npx hardhat deploy --tags V2-OCRSweeper",
+    "deploy-oca-sweeper": "npx hardhat deploy --tags V2-OCASweeper",
     "migrate-v1-to-v2": "npx ts-node --files scripts/v2/migrate-v1-to-v2.ts",
     "transfer-feeds": "npx ts-node --files scripts/v2/transfer-feeds.ts",
     "accept-feeds": "npx ts-node --files scripts/v2/accept-feeds.ts"

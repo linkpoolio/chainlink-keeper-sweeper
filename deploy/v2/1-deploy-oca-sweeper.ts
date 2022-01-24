@@ -17,11 +17,11 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
     linkToken = await ethers.getContract('Token')
   }
 
-  await deploy('OCRSweeper', {
+  await deploy('OCASweeper', {
     from: deployer,
     log: true,
-    args: [linkToken.address, ...Object.values(config.OCRSweeper)],
+    args: [linkToken.address, ...Object.values(config.OCASweeper)],
   })
 }
 
-module.exports.tags = ['V2-OCRSweeper']
+module.exports.tags = ['V2-OCASweeper']

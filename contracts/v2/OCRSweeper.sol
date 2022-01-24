@@ -5,10 +5,10 @@ import "./ProfitMarginProxy.sol";
 import "./interfaces/IOffchainAggregator.sol";
 
 /**
- * @title OCRSweeper
- * @dev Handles distribution of revenue for OCR feeds.
+ * @title OCASweeper
+ * @dev Handles distribution of revenue for Offchain Aggregators.
  */
-contract OCRSweeper is ProfitMarginProxy {
+contract OCASweeper is ProfitMarginProxy {
     address public transmitter;
 
     constructor(
@@ -33,8 +33,8 @@ contract OCRSweeper is ProfitMarginProxy {
     }
 
     /**
-     * @dev transfers payeeship to new address for selected OCR feeds
-     * @param _contracts OCR feeds to transfer payeeship for
+     * @dev transfers payeeship to new address for selected OCA feeds
+     * @param _contracts OCA feeds to transfer payeeship for
      * @param _newPayee address to transfer payeeship to
      **/
     function transferPayeeship(address[] calldata _contracts, address _newPayee) external onlyOwner {
@@ -44,8 +44,8 @@ contract OCRSweeper is ProfitMarginProxy {
     }
 
     /**
-     * @dev accepts payeeship for selected OCR feeds
-     * @param _contracts OCR feeds to accept payeeship for
+     * @dev accepts payeeship for selected OCA feeds
+     * @param _contracts OCA feeds to accept payeeship for
      **/
     function acceptPayeeship(address[] calldata _contracts) external onlyOwner {
         for (uint i = 0; i < _contracts.length; i++) {

@@ -3,8 +3,8 @@ import { Contract } from 'ethers'
 
 let account0: string
 let token: Contract
-let ocrSweeper: Contract
-let ocrFeeds: string[]
+let ocaSweeper: Contract
+let ocaFeeds: string[]
 
 async function setup() {
   const accounts = await ethers.getSigners()
@@ -13,14 +13,14 @@ async function setup() {
   const rewardsPool = await accounts[2].getAddress()
   const ownerWallet = await accounts[3].getAddress()
 
-  const Token = await ethers.getContractFactory('contracts/v2/mock/LinkToken.sol:LinkToken')
+  const Token = await ethers.getContractFactory('LinkToken')
   token = await Token.deploy('Chainlink', 'LINK', 1000000000)
 
   const ProfitMarginFeed = await ethers.getContractFactory('ProfitMarginFeed')
   const profitMarginFeed = await ProfitMarginFeed.deploy(4000)
 
-  const OCRSweeper = await ethers.getContractFactory('OCRSweeper')
-  ocrSweeper = await OCRSweeper.deploy(
+  const OCASweeper = await ethers.getContractFactory('OCASweeper')
+  ocaSweeper = await OCASweeper.deploy(
     token.address,
     rewardsPool,
     ownerWallet,
@@ -30,15 +30,15 @@ async function setup() {
     transmitter
   )
 
-  const OCRFeed = await ethers.getContractFactory('OCAggregator')
-  ocrFeeds = []
+  const OCAFeed = await ethers.getContractFactory('OffchainAggregator')
+  ocaFeeds = []
   for (let i = 0; i < 30; i++) {
-    let feed = await OCRFeed.deploy(token.address, [transmitter], [account0])
-    await feed.transferPayeeship(transmitter, ocrSweeper.address)
-    ocrFeeds.push(feed.address)
+    let feed = await OCAFeed.deploy(token.address, [transmitter], [account0])
+    await feed.transferPayeeship(transmitter, ocaSweeper.address)
+    ocaFeeds.push(feed.address)
   }
 
-  token.transfer(ocrSweeper.address, ethers.utils.parseEther('200'))
+  await token.transfer(ocaSweeper.address, ethers.utils.parseEther('200'))
 }
 
 async function main() {
@@ -47,24 +47,24 @@ async function main() {
 
   console.log(
     'distributeRewards -> ',
-    (await ocrSweeper.estimateGas.distributeRewards()).toNumber().toLocaleString()
+    (await ocaSweeper.estimateGas.distributeRewards()).toNumber().toLocaleString()
   )
 
   console.log(
     'performUpkeep -> ',
-    (await ocrSweeper.estimateGas.performUpkeep('0x00')).toNumber().toLocaleString()
+    (await ocaSweeper.estimateGas.performUpkeep('0x00')).toNumber().toLocaleString()
   )
 
   console.log(
     'acceptPayeeship (30 feeds) -> ',
-    (await ocrSweeper.estimateGas.acceptPayeeship(ocrFeeds)).toNumber().toLocaleString()
+    (await ocaSweeper.estimateGas.acceptPayeeship(ocaFeeds)).toNumber().toLocaleString()
   )
 
-  await ocrSweeper.acceptPayeeship(ocrFeeds)
+  await ocaSweeper.acceptPayeeship(ocaFeeds)
 
   console.log(
     'transferPayeeship (30 feeds) -> ',
-    (await ocrSweeper.estimateGas.transferPayeeship(ocrFeeds, account0)).toNumber().toLocaleString()
+    (await ocaSweeper.estimateGas.transferPayeeship(ocaFeeds, account0)).toNumber().toLocaleString()
   )
 
   console.log('\n')

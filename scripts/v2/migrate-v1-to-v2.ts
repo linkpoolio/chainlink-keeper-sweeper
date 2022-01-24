@@ -14,7 +14,7 @@ async function main() {
   const oldSweeperAddress = process.argv[2]
   const newSweeperAddress = process.argv[3]
 
-  const newSweeper = await ethers.getContractAt('OCRSweeper', newSweeperAddress)
+  const newSweeper = await ethers.getContractAt('OCASweeper', newSweeperAddress)
   const oldSweeper = await ethers.getContractAt('OffchainAggregatorSweeper', oldSweeperAddress)
 
   const oldFeeds = await oldSweeper.getContracts()

@@ -10,7 +10,7 @@ let newFeedTransfers = []
 
 const getFeedsToAdd = async (walletAddress, network) => {
   const networkId = network.chainId === 7777 ? 1 : network.chainId
-  const excludeFeeds = addedFeeds[network.chainId].concat(feedTransfers)
+  const excludeFeeds = addedFeeds[networkId].concat(feedTransfers)
 
   const totalFeeds = (
     await market.get('feeds', {
@@ -52,16 +52,16 @@ async function main() {
 
   network = await ethers.provider.getNetwork()
 
-  const walletAddress = process.argv[2]
-  const ocrSweeper = await ethers.getContract(`OCRSweeper`)
-  const transmitter = await ocrSweeper.transmitter()
+  const ocaSweeper = await ethers.getContract(`OCASweeper`)
+  const transmitter = await ocaSweeper.transmitter()
+  const walletAddress = process.argv[2] || transmitter
   const feedsToTransfer = await getFeedsToAdd(walletAddress, network)
 
   for (let i = 0; i < feedsToTransfer.length; i++) {
-    let feed = await ethers.getContractAt('OCAggregator', feedsToTransfer[i])
+    let feed = await ethers.getContractAt('OffchainAggregator', feedsToTransfer[i])
 
     let gasPrice = await ethGas.get('')
-    let tx = await feed.transferPayeeship(transmitter, ocrSweeper.address, {
+    let tx = await feed.transferPayeeship(transmitter, ocaSweeper.address, {
       maxFeePerGas: convertToWei(gasPrice.data.fastest) + 10000000000,
     })
     await tx.wait()
