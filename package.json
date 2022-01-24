@@ -7,7 +7,11 @@
     "start": "npx hardhat node --network hardhat",
     "compile": "npx hardhat compile",
     "test": "npx hardhat test test/v2/* --network hardhat",
-    "deploy-ocr-sweeper": "npx hardhat deploy --tags V2-OCRSweeper"
+    "estimate-gas": "npx hardhat run scripts/v2/estimate-gas.ts --network hardhat",
+    "deploy-ocr-sweeper": "npx hardhat deploy --tags V2-OCRSweeper",
+    "migrate-v1-to-v2": "npx ts-node --files scripts/v2/migrate-v1-to-v2.ts",
+    "transfer-feeds": "npx ts-node --files scripts/v2/transfer-feeds.ts",
+    "accept-feeds": "npx ts-node --files scripts/v2/accept-feeds.ts"
   },
   "repository": {
     "type": "git",
@@ -28,10 +32,10 @@
     "@types/node": "^14.11.2",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.1.1",
-    "ethers": "^5.0.19",
-    "hardhat": "^2.0.0",
-    "hardhat-deploy": "^0.7.0-beta.39",
-    "hardhat-deploy-ethers": "^0.3.0-beta.5",
+    "ethers": "5.5.3",
+    "hardhat": "2.8.3",
+    "hardhat-deploy": "0.9.27",
+    "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "prettier": "^2.1.2",
     "prettier-plugin-solidity": "^1.0.0-alpha.59",
     "ts-node": "^9.0.0",

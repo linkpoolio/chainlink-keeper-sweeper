@@ -1,6 +1,6 @@
 import { ethers } from 'hardhat'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { config } from '../config/v2/deploy'
+import { config } from '../../config/v2/deploy'
 
 module.exports = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre
@@ -9,12 +9,12 @@ module.exports = async function (hre: HardhatRuntimeEnvironment) {
 
   let linkToken: any = await ethers.getContractOrNull('LinkToken')
   if (!linkToken) {
-    await deploy('LinkToken', {
+    await deploy('Token', {
       from: deployer,
       log: true,
       args: ['Chainlink', 'LINK', 1000000000],
     })
-    linkToken = await ethers.getContract('LinkToken')
+    linkToken = await ethers.getContract('Token')
   }
 
   await deploy('OCRSweeper', {

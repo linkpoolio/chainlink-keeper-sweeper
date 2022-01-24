@@ -17,7 +17,7 @@ describe('ProfitMarginProxy', () => {
     rewardsPool = await accounts[1].getAddress()
     ownerWallet = await accounts[2].getAddress()
 
-    const Token = await ethers.getContractFactory('contracts/v2/mock/LinkToken.sol:LinkToken')
+    const Token = await ethers.getContractFactory('Token')
     token = await Token.deploy('Chainlink', 'LINK', 1000000000)
 
     const ProfitMarginFeed = await ethers.getContractFactory('ProfitMarginFeed')

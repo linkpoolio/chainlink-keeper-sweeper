@@ -1,6 +1,6 @@
 import { deployments, ethers } from 'hardhat'
 import { Contract } from 'ethers'
-import { config } from '../../config/deploy'
+import { config } from '../../../config/v1/deploy'
 
 let keeperSweeper: Contract
 let linkToken: Contract

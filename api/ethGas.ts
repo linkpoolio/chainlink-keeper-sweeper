@@ -1,5 +1,5 @@
 import axios from 'axios'
 
 export const ethGas = axios.create({
-  baseURL: `https://www.gasnow.org/api/v3/gas/price?utm_source=:${process.env.GAS_NOW_APP_NAME}`,
+  baseURL: `https://ethgasstation.info/api/ethgasAPI.json?api-key=${process.env.ETH_GAS_STATION_API_KEY}`,
 })

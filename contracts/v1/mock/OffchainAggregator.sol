@@ -6,7 +6,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract OffchainAggregator {
     IERC20 public token;
     address[] public transmitters;
-    mapping(address => address) private payees;
+    mapping(address => address) public payees;
+    mapping(address => address) public proposedPayees;
 
     constructor(
         address _token,
@@ -32,8 +33,12 @@ contract OffchainAggregator {
 
     function transferPayeeship(address _transmitter, address _proposed) external {
         require(msg.sender == payees[_transmitter], "only current payee can update");
-        payees[_transmitter] = _proposed;
+        proposedPayees[_transmitter] = _proposed;
     }
 
-    function acceptPayeeship(address _transmitter) external {}
+    function acceptPayeeship(address _transmitter) external {
+        address proposed = proposedPayees[_transmitter];
+        require(msg.sender == proposed, "Only proposed payee can accept");
+        payees[_transmitter] = proposed;
+    }
 }

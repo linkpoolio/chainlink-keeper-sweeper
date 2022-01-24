@@ -20,7 +20,7 @@ describe('OCRSweeper', () => {
     rewardsPool = await accounts[2].getAddress()
     ownerWallet = await accounts[3].getAddress()
 
-    const Token = await ethers.getContractFactory('contracts/v2/mock/LinkToken.sol:LinkToken')
+    const Token = await ethers.getContractFactory('Token')
     token = await Token.deploy('Chainlink', 'LINK', 1000000000)
 
     const ProfitMarginFeed = await ethers.getContractFactory('ProfitMarginFeed')
@@ -37,9 +37,7 @@ describe('OCRSweeper', () => {
       transmitter
     )
 
-    const OCRFeed = await ethers.getContractFactory(
-      'contracts/v2/mock/OffchainAggregator.sol:OffchainAggregator'
-    )
+    const OCRFeed = await ethers.getContractFactory('OCAggregator')
     ocrFeeds = []
     for (let i = 0; i < 10; i++) {
       let feed = await OCRFeed.deploy(token.address, [transmitter], [account0])
@@ -57,10 +55,7 @@ describe('OCRSweeper', () => {
   it('should be able to accept payeeship', async () => {
     await ocrSweeper.acceptPayeeship(ocrFeeds)
     for (let i = 0; i < ocrFeeds.length; i++) {
-      let feed = await ethers.getContractAt(
-        'contracts/v2/mock/OffchainAggregator.sol:OffchainAggregator',
-        ocrFeeds[i]
-      )
+      let feed = await ethers.getContractAt('OCAggregator', ocrFeeds[i])
       assert.equal(await feed.payees(transmitter), ocrSweeper.address, 'OCRSweeper should be payee')
     }
   })
@@ -74,10 +69,7 @@ describe('OCRSweeper', () => {
   it('should be able to transfer payeeship', async () => {
     await ocrSweeper.transferPayeeship(ocrFeeds, account0)
     for (let i = 0; i < ocrFeeds.length; i++) {
-      let feed = await ethers.getContractAt(
-        'contracts/v2/mock/OffchainAggregator.sol:OffchainAggregator',
-        ocrFeeds[i]
-      )
+      let feed = await ethers.getContractAt('OCAggregator', ocrFeeds[i])
       await feed.acceptPayeeship(transmitter)
       assert.equal(await feed.payees(transmitter), account0, 'Account0 should be payee')
     }

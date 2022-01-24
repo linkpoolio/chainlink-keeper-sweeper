@@ -3,7 +3,7 @@ pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract OffchainAggregator {
+contract OCAggregator {
     IERC20 public token;
     address[] public transmitters;
     mapping(address => address) public payees;
