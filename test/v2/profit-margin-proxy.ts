@@ -109,11 +109,13 @@ describe('ProfitMarginProxy', () => {
     await profitMarginProxy.setOwnerWallet(a2)
     await profitMarginProxy.setProfitMarginFeed(a3)
     await profitMarginProxy.setRewardsPoolProfitShare(500)
+    await profitMarginProxy.setMinRewardsForDistribution(10)
 
     assert.equal(await profitMarginProxy.rewardsPool(), a1, 'New adddress should be set')
     assert.equal(await profitMarginProxy.ownerWallet(), a2, 'New adddress should be set')
     assert.equal(await profitMarginProxy.profitMarginFeed(), a3, 'New adddress should be set')
     assert.equal(await profitMarginProxy.rewardsPoolProfitShare(), 500, 'New value should be set')
+    assert.equal(await profitMarginProxy.minRewardsForDistribution(), 10, 'New value should be set')
   })
 
   it('only owner should be able to update config variables', async () => {
@@ -128,6 +130,9 @@ describe('ProfitMarginProxy', () => {
     }, 'revert')
     await assertThrowsAsync(async () => {
       await profitMarginProxy.connect(accounts[1]).setRewardsPoolProfitShare(100)
+    }, 'revert')
+    await assertThrowsAsync(async () => {
+      await profitMarginProxy.connect(accounts[1]).setMinRewardsForDistribution(100)
     }, 'revert')
   })
 })

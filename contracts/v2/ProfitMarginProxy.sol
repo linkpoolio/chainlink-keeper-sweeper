@@ -111,6 +111,14 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
+     * @dev sets the minimum amount of rewards needed for distribtuin by a keeper
+     * @param _minRewardsForDistribution amount to set
+     **/
+    function setMinRewardsForDistribution(uint _minRewardsForDistribution) external onlyOwner {
+        minRewardsForDistribution = _minRewardsForDistribution;
+    }
+
+    /**
      * @dev distributes rewards
      * @param _amount amount of rewards to distribute
      **/
