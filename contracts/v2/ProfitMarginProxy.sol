@@ -77,6 +77,7 @@ contract ProfitMarginProxy is Ownable {
      * @param _rewardsPool address to set
      **/
     function setRewardsPool(address _rewardsPool) external onlyOwner {
+        require(_rewardsPool != address(0), "Address cannot be 0x0");
         rewardsPool = _rewardsPool;
     }
 
@@ -85,6 +86,7 @@ contract ProfitMarginProxy is Ownable {
      * @param _ownerWallet address to set
      **/
     function setOwnerWallet(address _ownerWallet) external onlyOwner {
+        require(_ownerWallet != address(0), "Address cannot be 0x0");
         ownerWallet = _ownerWallet;
     }
 
@@ -101,6 +103,10 @@ contract ProfitMarginProxy is Ownable {
      * @param _rewardsPoolProfitShare percentage to set (2500 = 25%)
      **/
     function setRewardsPoolProfitShare(uint _rewardsPoolProfitShare) external onlyOwner {
+        require(
+            _rewardsPoolProfitShare >= 100 && _rewardsPoolProfitShare <= 8000,
+            "Profit share percentage must be >= 1% and <= 80%"
+        );
         rewardsPoolProfitShare = _rewardsPoolProfitShare;
     }
 
@@ -111,13 +117,13 @@ contract ProfitMarginProxy is Ownable {
     function _distributeRewards(uint _amount) private {
         (, int profitMargin, , , ) = profitMarginFeed.latestRoundData();
 
+        uint rewardsPoolAmount;
         uint profit;
         if (profitMargin > 0) {
             profit = (_amount * uint(profitMargin)) / 10000;
+            rewardsPoolAmount = (profit * rewardsPoolProfitShare) / 10000;
+            rewardsToken.transferAndCall(rewardsPool, rewardsPoolAmount, "0x00");
         }
-
-        uint rewardsPoolAmount = (profit * rewardsPoolProfitShare) / 10000;
-        rewardsToken.transferAndCall(rewardsPool, rewardsPoolAmount, "0x00");
 
         uint ownerAmount = rewardsToken.balanceOf(address(this));
         rewardsToken.transferAndCall(ownerWallet, ownerAmount, "0x00");

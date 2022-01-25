@@ -29,7 +29,7 @@ const getFeedsToAdd = async (walletAddress, network) => {
     feeds = feeds.filter(
       (feed) =>
         feed.type.name === 'OFFCHAIN_AGGREGATOR' &&
-        feed.oracleAddresses
+        feed.walletAddresses
           ?.map((address) => address.toLowerCase())
           .includes(walletAddress.toLowerCase())
     )
@@ -52,9 +52,9 @@ async function main() {
 
   network = await ethers.provider.getNetwork()
 
+  const walletAddress = process.argv[2]
   const ocaSweeper = await ethers.getContract(`OCASweeper`)
   const transmitter = await ocaSweeper.transmitter()
-  const walletAddress = process.argv[2] || transmitter
   const feedsToTransfer = await getFeedsToAdd(walletAddress, network)
 
   for (let i = 0; i < feedsToTransfer.length; i++) {

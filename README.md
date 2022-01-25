@@ -37,10 +37,10 @@ To transfer feeds to `OCASweeper`, you must first set the environment variables 
 Next, you should initiate the transfer of payeeship using:
 
 ```
-yarn transfer-feeds
+yarn transfer-feeds <walletAddress>
 ```
 
-This will query the [Chainlink Market](https://market.link/?network=1) for all of the `OffchainAggregator` feeds associated with the `transmitter` set in `OCASweeper` and initiate a transfer of payeeship to `OCASweeper` for each feed if it has not already been transferred or initiated. Once transfer is initiated for a feed, the feed address will be exported to `scripts/v2/data/feedTransfers.ts`.
+This will query the [Chainlink Market](https://market.link/?network=1) for all of the `OffchainAggregator` feeds associated with `walletAddress` and initiate a transfer of payeeship to `OCASweeper` for each feed if it has not already been transferred or initiated. Once transfer is initiated for a feed, the feed address will be exported to `scripts/v2/data/feedTransfers.ts`.
 
 Lastly, you should accept payeeship through `OCASweeper` using:
 
