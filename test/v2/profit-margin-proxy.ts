@@ -6,6 +6,7 @@ const { assert } = require('chai')
 describe('ProfitMarginProxy', () => {
   let token: Contract
   let profitMarginProxy: Contract
+  let profitMarginFeed: Contract
   let accounts: Signer[]
   let account0: string
   let rewardsPool: string
@@ -21,7 +22,7 @@ describe('ProfitMarginProxy', () => {
     token = await Token.deploy('Chainlink', 'LINK', 1000000000)
 
     const ProfitMarginFeed = await ethers.getContractFactory('ProfitMarginFeed')
-    const profitMarginFeed = await ProfitMarginFeed.deploy(4000)
+    profitMarginFeed = await ProfitMarginFeed.deploy(4000)
 
     const ProfitMarginProxy = await ethers.getContractFactory('ProfitMarginProxy')
     profitMarginProxy = await ProfitMarginProxy.deploy(
@@ -65,6 +66,24 @@ describe('ProfitMarginProxy', () => {
     }, 'revert')
   })
 
+  it('if profit margin feed is set to 0x0 address, profit margin should always be 100%', async () => {
+    await profitMarginProxy.setProfitMarginFeed(ethers.constants.AddressZero)
+    await token.transfer(profitMarginProxy.address, toEther(100))
+    await profitMarginProxy.distributeRewards()
+    await profitMarginProxy.setProfitMarginFeed(profitMarginFeed.address)
+
+    assert.equal(
+      ethers.utils.formatEther(await token.balanceOf(rewardsPool)),
+      '28.0',
+      'RewardsPool balance should be 28'
+    )
+    assert.equal(
+      ethers.utils.formatEther(await token.balanceOf(ownerWallet)),
+      '172.0',
+      'OwnerWallet balance should be 172'
+    )
+  })
+
   it('checkUpkeep should return whether or not min distribution threshold is met', async () => {
     await token.transfer(profitMarginProxy.address, toEther(99))
     assert.equal(
@@ -82,13 +101,13 @@ describe('ProfitMarginProxy', () => {
 
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(rewardsPool)),
-      '24.0',
-      'RewardsPool balance should be 24'
+      '44.0',
+      'RewardsPool balance should be 44'
     )
     assert.equal(
       ethers.utils.formatEther(await token.balanceOf(ownerWallet)),
-      '276.0',
-      'OwnerWallet balance should be 276'
+      '356.0',
+      'OwnerWallet balance should be 356'
     )
   })
 

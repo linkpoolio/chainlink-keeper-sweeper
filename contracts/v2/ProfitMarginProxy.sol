@@ -91,7 +91,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the address of the profit margin feed used to calculate distribution amounts
+     * @dev sets the address of the profit margin feed used to calculate distribution amounts (if set to 0x0, profit margin will always be 100%)
      * @param _profitMarginFeed address to set
      **/
     function setProfitMarginFeed(address _profitMarginFeed) external onlyOwner {
@@ -123,7 +123,11 @@ contract ProfitMarginProxy is Ownable {
      * @param _amount amount of rewards to distribute
      **/
     function _distributeRewards(uint _amount) private {
-        (, int profitMargin, , , ) = profitMarginFeed.latestRoundData();
+        int profitMargin = 10000;
+
+        if (address(profitMarginFeed) != address(0)) {
+            (, profitMargin, , , ) = profitMarginFeed.latestRoundData();
+        }
 
         uint rewardsPoolAmount;
         uint profit;
