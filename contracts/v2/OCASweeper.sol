@@ -6,7 +6,7 @@ import "./interfaces/IOffchainAggregator.sol";
 
 /**
  * @title OCASweeper
- * @dev Handles distribution of revenue for Offchain Aggregators.
+ * @notice Handles distribution of revenue for Offchain Aggregators
  */
 contract OCASweeper is ProfitMarginProxy {
     address public transmitter;
@@ -33,7 +33,7 @@ contract OCASweeper is ProfitMarginProxy {
     }
 
     /**
-     * @dev transfers payeeship to new address for selected OCA feeds
+     * @notice transfers payeeship to new address for selected OCA feeds
      * @param _contracts OCA feeds to transfer payeeship for
      * @param _newPayee address to transfer payeeship to
      **/
@@ -44,7 +44,7 @@ contract OCASweeper is ProfitMarginProxy {
     }
 
     /**
-     * @dev accepts payeeship for selected OCA feeds
+     * @notice accepts payeeship for selected OCA feeds
      * @param _contracts OCA feeds to accept payeeship for
      **/
     function acceptPayeeship(address[] calldata _contracts) external onlyOwner {
@@ -54,7 +54,7 @@ contract OCASweeper is ProfitMarginProxy {
     }
 
     /**
-     * @dev sets a new transmitter address
+     * @notice sets a new transmitter address
      * @param _transmitter address to set
      **/
     function setTransmitter(address _transmitter) external onlyOwner {

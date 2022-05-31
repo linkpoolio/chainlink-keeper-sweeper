@@ -8,7 +8,7 @@ import "./interfaces/IERC677.sol";
 
 /**
  * @title ProfitMarginProxy
- * @dev Handles distribution of revenue based on profit margins.
+ * @notice Handles distribution of revenue based on profit margins
  */
 contract ProfitMarginProxy is Ownable {
     IERC677 public rewardsToken;
@@ -20,7 +20,7 @@ contract ProfitMarginProxy is Ownable {
 
     uint public minRewardsForDistribution;
 
-    event RewardsDistributed(address indexed sender, uint totalAmount, uint rewardsPoolAmount, uint ownerAmount);
+    event DistributeRewards(address indexed sender, uint totalAmount, uint rewardsPoolAmount, uint ownerAmount);
 
     constructor(
         address _rewardsToken,
@@ -39,7 +39,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev returns the amount of available rewards
+     * @notice returns the amount of rewards available for distribution
      * @return amount of rewards
      **/
     function availableRewards() public view returns (uint) {
@@ -47,15 +47,17 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev returns whether or not rewards should be distributed
-     * @return whether to perform upkeep
+     * @notice returns whether or not rewards should be distributed
+     * @dev used by keepers
+     * @return whether to perform upkeep or not
      **/
     function checkUpkeep(bytes calldata _checkData) external view returns (bool, bytes memory) {
         return (availableRewards() >= minRewardsForDistribution, "0x00");
     }
 
     /**
-     * @dev distributes rewards if rewards >= minRewardsForDistribution
+     * @notice distributes rewards if rewards >= minRewardsForDistribution
+     * @dev used by keepers
      **/
     function performUpkeep(bytes calldata _performData) external {
         uint rewards = availableRewards();
@@ -64,7 +66,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev distributes rewards if there are any
+     * @notice distributes rewards if there are any
      **/
     function distributeRewards() external {
         uint rewards = availableRewards();
@@ -73,7 +75,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the rewardsPool address
+     * @notice sets the rewardsPool address
      * @param _rewardsPool address to set
      **/
     function setRewardsPool(address _rewardsPool) external onlyOwner {
@@ -82,7 +84,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the ownerWallet address (not to be confused with the contract owner)
+     * @notice sets the ownerWallet address (not to be confused with the contract owner)
      * @param _ownerWallet address to set
      **/
     function setOwnerWallet(address _ownerWallet) external onlyOwner {
@@ -91,7 +93,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the address of the profit margin feed used to calculate distribution amounts (if set to 0x0, profit margin will always be 100%)
+     * @notice sets the address of the profit margin feed used to calculate distribution amounts (if set to 0x0, profit margin will always be 100%)
      * @param _profitMarginFeed address to set
      **/
     function setProfitMarginFeed(address _profitMarginFeed) external onlyOwner {
@@ -99,8 +101,8 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the percentage of profits the rewardsPool receives (ownerWallet receives the rest)
-     * @param _rewardsPoolProfitShare percentage to set (2500 = 25%)
+     * @notice sets the basis points of profits the rewardsPool receives (ownerWallet receives the rest)
+     * @param _rewardsPoolProfitShare basis points to set
      **/
     function setRewardsPoolProfitShare(uint _rewardsPoolProfitShare) external onlyOwner {
         require(
@@ -111,7 +113,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev sets the minimum amount of rewards needed for distribtuin by a keeper
+     * @notice sets the minimum amount of rewards needed for distribution by a keeper
      * @param _minRewardsForDistribution amount to set
      **/
     function setMinRewardsForDistribution(uint _minRewardsForDistribution) external onlyOwner {
@@ -119,7 +121,7 @@ contract ProfitMarginProxy is Ownable {
     }
 
     /**
-     * @dev distributes rewards
+     * @notice distributes rewards
      * @param _amount amount of rewards to distribute
      **/
     function _distributeRewards(uint _amount) private {
@@ -137,9 +139,9 @@ contract ProfitMarginProxy is Ownable {
             rewardsToken.transferAndCall(rewardsPool, rewardsPoolAmount, "0x00");
         }
 
-        uint ownerAmount = rewardsToken.balanceOf(address(this));
+        uint ownerAmount = _amount - rewardsPoolAmount;
         rewardsToken.transferAndCall(ownerWallet, ownerAmount, "0x00");
 
-        emit RewardsDistributed(msg.sender, _amount, rewardsPoolAmount, ownerAmount);
+        emit DistributeRewards(msg.sender, _amount, rewardsPoolAmount, ownerAmount);
     }
 }
