@@ -1,8 +1,8 @@
 import { ethers } from 'hardhat'
 const { assert } = require('chai')
 
-export const toEther = (amount: string) => {
-  return ethers.utils.parseEther(amount).toHexString()
+export const toEther = (amount: string | number) => {
+  return ethers.utils.parseEther(amount.toString()).toHexString()
 }
 
 export const assertThrowsAsync = async (fn: Function, regExp: string) => {
