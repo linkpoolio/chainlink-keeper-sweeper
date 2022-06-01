@@ -11,20 +11,23 @@ async function main() {
 
   network = await ethers.provider.getNetwork()
 
-  const oldSweeperAddress = process.argv[2]
-  const newSweeperAddress = process.argv[3]
-
-  const newSweeper = await ethers.getContractAt('OCASweeper', newSweeperAddress)
-  const oldSweeper = await ethers.getContractAt('OffchainAggregatorSweeper', oldSweeperAddress)
+  const oldSweeper = await ethers.getContract('OffchainAggregatorSweeper')
+  const newSweeper = await ethers.getContract('OCASweeper')
 
   const oldFeeds = await oldSweeper.getContracts()
-  const feedsToMigrate = oldFeeds.filter(
-    (address) =>
+
+  const feedsToMigrate = []
+  const idxsToMigrate = []
+  oldFeeds.forEach((address, index) => {
+    if (
       !addedFeeds[network.chainId].find(
         (addedAddress) => addedAddress.toLowerCase() === address.toLowerCase()
       )
-  )
-  const idxsToMigrate = Array.from(Array(oldFeeds.length)).map((v, i) => i)
+    ) {
+      feedsToMigrate.push(address)
+      idxsToMigrate.push(index)
+    }
+  })
 
   for (let i = 0; i < feedsToMigrate.length; i += 30) {
     let gasPrice = await ethGas.get('')

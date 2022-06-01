@@ -8,7 +8,7 @@ import { convertToWei, exportFeedTransfers } from './utils/helpers'
 let network
 let newFeedTransfers = []
 
-const getFeedsToAdd = async (walletAddress, network) => {
+const getFeedsToTransfer = async (walletAddress, network) => {
   const networkId = network.chainId === 7777 ? 1 : network.chainId
   const excludeFeeds = addedFeeds[networkId].concat(feedTransfers)
 
@@ -55,7 +55,7 @@ async function main() {
   const walletAddress = process.argv[2]
   const ocaSweeper = await ethers.getContract(`OCASweeper`)
   const transmitter = await ocaSweeper.transmitter()
-  const feedsToTransfer = await getFeedsToAdd(walletAddress, network)
+  const feedsToTransfer = await getFeedsToTransfer(walletAddress, network)
 
   for (let i = 0; i < feedsToTransfer.length; i++) {
     let feed = await ethers.getContractAt('OffchainAggregator', feedsToTransfer[i])
