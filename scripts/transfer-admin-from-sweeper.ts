@@ -1,7 +1,6 @@
 import { ethers } from 'hardhat'
-import { ethGas } from '../api/ethGas'
 
-const sweeperTypes = ['Oracle', 'FluxAggregator', 'OffchainAggregator']
+const sweeperTypes = ['FluxAggregator', 'OffchainAggregator']
 
 async function main() {
   console.log('**** Transferring admin ****\n')
@@ -14,15 +13,13 @@ async function main() {
   }
 
   const sweeper = await ethers.getContract(`${sweeperType}Sweeper`)
-  const addedContracts = await sweeper.getContracts()
-  const idxs = addedContracts.map((_contract, index) => index)
+  const contracts = await sweeper.getContracts()
+  const idxs = contracts.map((_contract, index) => index)
 
   for (let i = 0; i < idxs.length; i += 30) {
-    let gasPrice = await ethGas.get('')
-    let tx = await sweeper.transferAdmin(idxs.slice(i, i + 30), newAdmin, {
-      gasPrice: gasPrice.data.data.rapid + 10000000000,
-    })
+    let tx = await sweeper.transferAdmin(idxs.slice(i, i + 30), newAdmin)
     await tx.wait()
+    console.log(`Admin transferred for contracts`, i, '-', Math.min(i + 29, contracts.length - 1))
   }
 
   console.log(`Admin transferred for ${idxs.length} contracts\n`)
