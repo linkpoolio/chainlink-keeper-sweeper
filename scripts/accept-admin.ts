@@ -18,7 +18,7 @@ async function main() {
     const oracle = await sweeper.oracle()
 
     for (let i = 0; i < contracts.length; i++) {
-      let tx = await ethers.getContractAt(sweeperType, contracts[i]).acceptAdmin(oracle)
+      let tx = await (await ethers.getContractAt(sweeperType, contracts[i])).acceptAdmin(oracle)
       await tx.wait()
       console.log('Accepted contract', i)
     }
@@ -26,7 +26,9 @@ async function main() {
     const transmitter = await sweeper.transmitter()
 
     for (let i = 0; i < contracts.length; i++) {
-      let tx = await ethers.getContractAt(sweeperType, contracts[i]).acceptPayeeship(transmitter)
+      let tx = await (await ethers.getContractAt(sweeperType, contracts[i])).acceptPayeeship(
+        transmitter
+      )
       await tx.wait()
       console.log('Accepted contract', i)
     }
